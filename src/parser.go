@@ -64,12 +64,12 @@ func fileData(mapStock map[string]StockInfo) map[string]StockInfo {
 			continue
 		}
 		//1有积累--- 现价不为空
-		if value.gzfx.NEW == 0 {
+		if value.gzfx.NEW < 5 {
 			delete(mapStock, key)
 			continue
 		}
-		//1有积累 --- 每股净资产>0 && 不为空
-		if value.yjbb.BPS <= 0 {
+		//1有积累 --- 每股净资产>1 && 不为空
+		if value.yjbb.BPS < 1 {
 			delete(mapStock, key)
 			continue
 		}
@@ -167,6 +167,12 @@ func fileData(mapStock map[string]StockInfo) map[string]StockInfo {
 		//3成长 -- 毛利率>=10%
 		var mll = stock.ToFloat(single.ZYZB[0].MLL)
 		if mll < 10 {
+			delete(mapStock, key)
+			continue
+		}
+		//3成长 -- 净利润率>=5%
+		var jll = stock.ToFloat(single.ZYZB[0].JLL)
+		if jll < 5 {
 			delete(mapStock, key)
 			continue
 		}
