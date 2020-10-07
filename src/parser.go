@@ -196,6 +196,7 @@ func exportResult(mapStock map[string]StockInfo) {
 
 		var single, _ = stock.ParseSingle(key)
 
+		//2积累--每股公积金
 		var mggjj = stock.ToFloat(single.ZYZB[0].MGGJJ)
 		if mggjj*4 > float64(value.gzfx.NEW) {
 			fmt.Printf(" %c[;;36m  每股公积金=%f  %c[0m ", 0x1B, mggjj, 0x1B)
@@ -204,7 +205,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else {
 			fmt.Printf(" 每股公积金=%f", mggjj)
 		}
-
+		//1积累--每股未分配利润
 		var mgwfply = stock.ToFloat(single.ZYZB[0].MGWFPLY)
 		if mgwfply*4 > float64(value.gzfx.NEW) {
 			fmt.Printf(" %c[;;36m  每股未分配利润=%f  %c[0m ", 0x1B, mgwfply, 0x1B)
@@ -214,25 +215,36 @@ func exportResult(mapStock map[string]StockInfo) {
 			fmt.Printf(" 每股未分配利润=%f", mgwfply)
 		}
 
+		//2估值-市净率
 		if value.gzfx.PB8 <= 5 {
 			fmt.Printf(" %c[;;36m  市净率=%f  %c[0m ", 0x1B, value.gzfx.PB8, 0x1B)
 		} else {
 			fmt.Printf(" 市净率=%f", value.gzfx.PB8)
 		}
+		//2估值-动态市盈率
 		if value.gzfx.PE9 <= 25 {
 			fmt.Printf(" %c[;;36m  动态市盈率=%f  %c[0m ", 0x1B, value.gzfx.PE9, 0x1B)
 		} else {
 			fmt.Printf(" 动态市盈率=%f", value.gzfx.PE9)
 		}
+		//2估值-静态市盈率
 		if value.gzfx.PE7 <= 25 {
 			fmt.Printf(" %c[;;36m  静态市盈率=%f  %c[0m ", 0x1B, value.gzfx.PE7, 0x1B)
 		} else {
 			fmt.Printf(" 静态市盈率=%f", value.gzfx.PE7)
 		}
+		//2估值-市销率
 		if value.gzfx.PS9 <= 3 {
 			fmt.Printf(" %c[;;36m  市销率=%f  %c[0m ", 0x1B, value.gzfx.PS9, 0x1B)
 		} else {
 			fmt.Printf(" 市销率=%f", value.gzfx.PS9)
+		}
+
+		//3成长-净益率
+		if value.yjbb.WEIGHTAVG_ROE >= 10 {
+			fmt.Printf(" %c[;;36m  净益率=%f  %c[0m ", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
+		} else {
+			fmt.Printf(" 净益率=%f", value.yjbb.WEIGHTAVG_ROE)
 		}
 
 		fmt.Println("")
