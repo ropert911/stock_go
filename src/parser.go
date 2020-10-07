@@ -156,11 +156,15 @@ func fileData(mapStock map[string]StockInfo) map[string]StockInfo {
 		var tb0 = stock.ToFloat(single.ZYZB[0].YYZSRTBZZ)
 		var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
 		var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
-		if tb1 < -10 || tb2 < -10 { //近3年有下跌10%的忽略
+		if tb0 < 15 { //当年大于15%
 			delete(mapStock, key)
 			continue
 		}
-		if !((tb0 >= 15 && tb1 >= 10 && tb2 >= 10) || ((tb0+tb1+tb2)/3 >= 20)) {
+		if tb1 < 0 || tb2 < 0 { //近3年不能有负增长
+			delete(mapStock, key)
+			continue
+		}
+		if !((tb1 >= 10 && tb2 >= 10) || ((tb0+tb1+tb2)/3 >= 20)) {
 			delete(mapStock, key)
 			continue
 		}
