@@ -506,29 +506,35 @@ func DownloadSingle(code string) {
 	fmt.Println("download single for ", code, " ", reportDate)
 
 	//主要指标
-	zyzb, err = DownloadSingleZyzb(code)
-	if nil != err {
-		fmt.Println("Error get 主要指标", err)
-		return
+	{
+		zyzb, err = DownloadSingleZyzb(code)
+		if nil != err {
+			fmt.Println("Error get 主要指标", err)
+			return
+		}
+		zyzbs = *zyzb
+		zyzbs = strings.ToUpper(zyzbs)
+		//fmt.Println(zyzbs)
 	}
-	zyzbs = *zyzb
-	zyzbs = strings.ToUpper(zyzbs)
-	//fmt.Println(zyzbs)
 
 	//资产负债表
-	zcfz, err = DownloadSingleZcfz(code)
-	if nil != err {
-		fmt.Println("Error get 资产负债", err)
-		return
+	{
+		zcfz, err = DownloadSingleZcfz(code)
+		if nil != err {
+			fmt.Println("Error get 资产负债", err)
+			return
+		}
+		zcfzs = *zcfz
+		if strings.HasPrefix(zcfzs, `"`) {
+			zcfzs = zcfzs[1 : len(zcfzs)-1]
+		}
+		//fmt.Println(zcfzs)
+		zcfzs = strings.ReplaceAll(zcfzs, `\"`, `"`)
+		zcfzs = strings.ToUpper(zcfzs)
+		//fmt.Println(zcfzs)
 	}
-	zcfzs = *zcfz
-	if strings.HasPrefix(zcfzs, `"`) {
-		zcfzs = zcfzs[1 : len(zcfzs)-1]
-	}
-	//fmt.Println(zcfzs)
-	zcfzs = strings.ReplaceAll(zcfzs, `\"`, `"`)
-	zcfzs = strings.ToUpper(zcfzs)
-	//fmt.Println(zcfzs)
+	//利润表-略
+	//现金流量表-略
 
 	//保存到文件里
 	file.WriteFile(fileName, `{

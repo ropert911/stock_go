@@ -9,4 +9,5 @@ func main() {
 	stock.DownloadStockYjbb() //业绩报表
 	stock.DownloadStockZcfz() //资产负债表
 	stock.DownloadStockLrb()  //利润表
+	//现金流量表
 }
