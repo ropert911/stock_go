@@ -164,6 +164,12 @@ func fileData(mapStock map[string]StockInfo) map[string]StockInfo {
 			delete(mapStock, key)
 			continue
 		}
+		//3成长 -- 毛利率>=10%
+		var mll = stock.ToFloat(single.ZYZB[0].MLL)
+		if mll < 10 {
+			delete(mapStock, key)
+			continue
+		}
 	}
 
 	return mapStock
@@ -203,7 +209,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if mggjj > 8 {
 			fmt.Printf("%c[;;35m  每股公积金=%f%c[0m ", 0x1B, mggjj, 0x1B)
 		} else {
-			fmt.Printf(" 每股公积金=%f", mggjj)
+			//fmt.Printf(" 每股公积金=%f", mggjj)
 		}
 		//1积累--每股未分配利润
 		var mgwfply = stock.ToFloat(single.ZYZB[0].MGWFPLY)
@@ -212,52 +218,52 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if mgwfply > 8 {
 			fmt.Printf("%c[;;35m  每股未分配利润=%f%c[0m ", 0x1B, mgwfply, 0x1B)
 		} else {
-			fmt.Printf(" 每股未分配利润=%f", mgwfply)
+			//fmt.Printf(" 每股未分配利润=%f", mgwfply)
 		}
 
 		//2估值-市净率
 		if value.gzfx.PB8 <= 5 {
 			fmt.Printf("%c[;;36m  市净率=%f%c[0m ", 0x1B, value.gzfx.PB8, 0x1B)
 		} else {
-			fmt.Printf(" 市净率=%f", value.gzfx.PB8)
+			//fmt.Printf(" 市净率=%f", value.gzfx.PB8)
 		}
 		//2估值-动态市盈率
 		if value.gzfx.PE9 <= 25 {
 			fmt.Printf("%c[;;36m  动态市盈率=%f%c[0m ", 0x1B, value.gzfx.PE9, 0x1B)
 		} else {
-			fmt.Printf(" 动态市盈率=%f", value.gzfx.PE9)
+			//fmt.Printf(" 动态市盈率=%f", value.gzfx.PE9)
 		}
 		//2估值-静态市盈率
 		if value.gzfx.PE7 <= 25 {
 			fmt.Printf("%c[;;36m  静态市盈率=%f%c[0m ", 0x1B, value.gzfx.PE7, 0x1B)
 		} else {
-			fmt.Printf(" 静态市盈率=%f", value.gzfx.PE7)
+			//fmt.Printf(" 静态市盈率=%f", value.gzfx.PE7)
 		}
 		//2估值-市销率
 		if value.gzfx.PS9 <= 3 {
 			fmt.Printf("%c[;;36m  市销率=%f%c[0m ", 0x1B, value.gzfx.PS9, 0x1B)
 		} else {
-			fmt.Printf(" 市销率=%f", value.gzfx.PS9)
+			//fmt.Printf(" 市销率=%f", value.gzfx.PS9)
 		}
 
 		//3成长-净益率
 		if value.yjbb.WEIGHTAVG_ROE >= 10 {
 			fmt.Printf("%c[;;36m  净益率=%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else {
-			fmt.Printf(" 净益率=%f", value.yjbb.WEIGHTAVG_ROE)
+			//fmt.Printf(" 净益率=%f", value.yjbb.WEIGHTAVG_ROE)
 		}
 		//3成长-毛利率
 		var mll = stock.ToFloat(single.ZYZB[0].MLL)
 		if mll >= 30 {
 			fmt.Printf("%c[;;36m  毛利率=%f%c[0m", 0x1B, mll, 0x1B)
 		} else {
-			fmt.Printf(" 毛利率=%f", mll)
+			//fmt.Printf(" 毛利率=%f", mll)
 		}
 		var jll = stock.ToFloat(single.ZYZB[0].JLL)
 		if jll >= 20 {
 			fmt.Printf("%c[;;36m  净利率=%f%c[0m", 0x1B, jll, 0x1B)
 		} else {
-			fmt.Printf(" 净利率=%f", jll)
+			//fmt.Printf(" 净利率=%f", jll)
 		}
 		//3成长 -- 3年平均>=20%
 		var zyzbP1 stock.SingleZyzb
@@ -280,7 +286,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		if avg >= 30 {
 			fmt.Printf("%c[;;36m  3年收入同比平均=%f%c[0m", 0x1B, avg, 0x1B)
 		} else {
-			fmt.Printf(" 3年收入同比平均=%f", avg)
+			//fmt.Printf(" 3年收入同比平均=%f", avg)
 		}
 
 		fmt.Println("")
