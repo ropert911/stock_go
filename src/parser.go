@@ -139,8 +139,7 @@ func fileData(mapStock map[string]StockInfo) map[string]StockInfo {
 			continue
 		}
 
-		//3成长 -- 前2年>10% 或近 3年平均15%
-		var zyzbP0 = single.ZYZB[0]
+		//3成长 -- 前2年>10% 或近 3年平均20%
 		var zyzbP1 stock.SingleZyzb
 		var zyzbP2 stock.SingleZyzb
 		var curYear, _ = stock.GetDate(single.ZYZB[0].DATE)
@@ -154,10 +153,14 @@ func fileData(mapStock map[string]StockInfo) map[string]StockInfo {
 				}
 			}
 		}
-		var tb0 = stock.ToFloat(zyzbP0.YYZSRTBZZ)
+		var tb0 = stock.ToFloat(single.ZYZB[0].YYZSRTBZZ)
 		var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
 		var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
-		if (tb0 < 15 || tb1 < 10 || tb2 < 10) && ((tb0+tb1+tb2)/3 < 20) {
+		if tb1 < -10 || tb2 < -10 { //近3年有下跌10%的忽略
+			delete(mapStock, key)
+			continue
+		}
+		if !((tb0 >= 15 && tb1 >= 10 && tb2 >= 10) || ((tb0+tb1+tb2)/3 >= 20)) {
 			delete(mapStock, key)
 			continue
 		}
