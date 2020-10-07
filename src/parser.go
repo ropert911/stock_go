@@ -139,7 +139,6 @@ func fileData(mapStock map[string]StockInfo) map[string]StockInfo {
 			continue
 		}
 
-		//3成长 -- 前2年>10% 或近 3年平均20%
 		var zyzbP1 stock.SingleZyzb
 		var zyzbP2 stock.SingleZyzb
 		var curYear, _ = stock.GetDate(single.ZYZB[0].DATE)
@@ -153,20 +152,34 @@ func fileData(mapStock map[string]StockInfo) map[string]StockInfo {
 				}
 			}
 		}
-		var tb0 = stock.ToFloat(single.ZYZB[0].YYZSRTBZZ)
-		var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
-		var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
-		if tb0 < 15 { //当年大于15%
-			delete(mapStock, key)
-			continue
+
+		//3成长 -- 近3年利润不为负
+		{
+			var jlr0 = stock.ToFloat(single.ZYZB[0].GSJLR)
+			var jlr1 = stock.ToFloat(zyzbP1.GSJLR)
+			var jlr2 = stock.ToFloat(zyzbP2.GSJLR)
+			if jlr0 < 0 || jlr1 < 0 || jlr2 < 0 {
+				delete(mapStock, key)
+				continue
+			}
 		}
-		if tb1 < 0 || tb2 < 0 { //近3年不能有负增长
-			delete(mapStock, key)
-			continue
-		}
-		if !((tb1 >= 10 && tb2 >= 10) || ((tb0+tb1+tb2)/3 >= 20)) {
-			delete(mapStock, key)
-			continue
+		//3成长 -- 前2年>10% 或近 3年平均20%
+		{
+			var tb0 = stock.ToFloat(single.ZYZB[0].YYZSRTBZZ)
+			var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
+			var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
+			if tb0 < 15 { //当年大于15%
+				delete(mapStock, key)
+				continue
+			}
+			if tb1 < 0 || tb2 < 0 { //近3年不能有负增长
+				delete(mapStock, key)
+				continue
+			}
+			if !((tb1 >= 10 && tb2 >= 10) || ((tb0+tb1+tb2)/3 >= 20)) {
+				delete(mapStock, key)
+				continue
+			}
 		}
 		//3成长 -- 毛利率>=10%
 		var mll = stock.ToFloat(single.ZYZB[0].MLL)
@@ -257,7 +270,9 @@ func exportResult(mapStock map[string]StockInfo) {
 		}
 
 		//3成长-净益率
-		if value.yjbb.WEIGHTAVG_ROE >= 10 {
+		if value.yjbb.WEIGHTAVG_ROE >= 17 {
+			fmt.Printf("%c[;;35m  净益率=%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
+		} else if value.yjbb.WEIGHTAVG_ROE >= 10 {
 			fmt.Printf("%c[;;36m  净益率=%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else {
 			//fmt.Printf(" 净益率=%f", value.yjbb.WEIGHTAVG_ROE)
