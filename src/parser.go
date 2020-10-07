@@ -16,7 +16,7 @@ type StockInfo struct {
 
 func main() {
 	mapStock := parserData()
-	mapStock = fileData(mapStock)
+	mapStock = filterData(mapStock)
 	exportResult(mapStock)
 }
 
@@ -56,7 +56,7 @@ func parserData() map[string]StockInfo {
 }
 
 //过滤掉不符合条件的
-func fileData(mapStock map[string]StockInfo) map[string]StockInfo {
+func filterData(mapStock map[string]StockInfo) map[string]StockInfo {
 	for key, value := range mapStock {
 		//1有积累---非ST
 		if strings.HasPrefix(value.gzfx.SName, "*ST") || strings.HasPrefix(value.gzfx.SName, "ST") {
@@ -123,7 +123,7 @@ func fileData(mapStock map[string]StockInfo) map[string]StockInfo {
 			fmt.Println("Error parse single stock data ", err)
 			continue
 		}
-		//1有积累 -- 每股公积金>0.2元
+		//1有积累 -- 每股公积金>0.5元
 		if stock.ToFloat(single.ZYZB[0].MGGJJ) < 0.5 {
 			delete(mapStock, key)
 			continue
@@ -133,7 +133,7 @@ func fileData(mapStock map[string]StockInfo) map[string]StockInfo {
 			delete(mapStock, key)
 			continue
 		}
-		//1有积累 -- 每股未分配利润>0.2元
+		//1有积累 -- 每股未分配利润>0.5元
 		if stock.ToFloat(single.ZYZB[0].MGWFPLY) < 0.5 {
 			delete(mapStock, key)
 			continue
@@ -227,19 +227,19 @@ func exportResult(mapStock map[string]StockInfo) {
 
 		//2积累--每股公积金
 		var mggjj = stock.ToFloat(single.ZYZB[0].MGGJJ)
-		if mggjj*4 > float64(value.gzfx.NEW) {
-			fmt.Printf("%c[;;36m  每股公积金=%f%c[0m ", 0x1B, mggjj, 0x1B)
-		} else if mggjj > 8 {
+		if mggjj*3 > float64(value.gzfx.NEW) || mggjj > 10 {
 			fmt.Printf("%c[;;35m  每股公积金=%f%c[0m ", 0x1B, mggjj, 0x1B)
+		} else if mggjj*4 > float64(value.gzfx.NEW) || mggjj > 8 {
+			fmt.Printf("%c[;;36m  每股公积金=%f%c[0m ", 0x1B, mggjj, 0x1B)
 		} else {
 			//fmt.Printf(" 每股公积金=%f", mggjj)
 		}
 		//1积累--每股未分配利润
 		var mgwfply = stock.ToFloat(single.ZYZB[0].MGWFPLY)
-		if mgwfply*4 > float64(value.gzfx.NEW) {
-			fmt.Printf("%c[;;36m  每股未分配利润=%f%c[0m ", 0x1B, mgwfply, 0x1B)
-		} else if mgwfply > 8 {
+		if mgwfply*3 > float64(value.gzfx.NEW) || mgwfply > 10 {
 			fmt.Printf("%c[;;35m  每股未分配利润=%f%c[0m ", 0x1B, mgwfply, 0x1B)
+		} else if mgwfply*4 > float64(value.gzfx.NEW) || mgwfply > 8 {
+			fmt.Printf("%c[;;36m  每股未分配利润=%f%c[0m ", 0x1B, mgwfply, 0x1B)
 		} else {
 			//fmt.Printf(" 每股未分配利润=%f", mgwfply)
 		}
@@ -251,19 +251,25 @@ func exportResult(mapStock map[string]StockInfo) {
 			//fmt.Printf(" 市净率=%f", value.gzfx.PB8)
 		}
 		//2估值-动态市盈率
-		if value.gzfx.PE9 <= 25 {
+		if value.gzfx.PE9 <= 15 {
+			fmt.Printf("%c[;;35m  动态市盈率=%f%c[0m ", 0x1B, value.gzfx.PE9, 0x1B)
+		} else if value.gzfx.PE9 <= 25 {
 			fmt.Printf("%c[;;36m  动态市盈率=%f%c[0m ", 0x1B, value.gzfx.PE9, 0x1B)
 		} else {
 			//fmt.Printf(" 动态市盈率=%f", value.gzfx.PE9)
 		}
 		//2估值-静态市盈率
-		if value.gzfx.PE7 <= 25 {
+		if value.gzfx.PE7 <= 15 {
+			fmt.Printf("%c[;;35m  静态市盈率=%f%c[0m ", 0x1B, value.gzfx.PE7, 0x1B)
+		} else if value.gzfx.PE7 <= 25 {
 			fmt.Printf("%c[;;36m  静态市盈率=%f%c[0m ", 0x1B, value.gzfx.PE7, 0x1B)
 		} else {
 			//fmt.Printf(" 静态市盈率=%f", value.gzfx.PE7)
 		}
 		//2估值-市销率
-		if value.gzfx.PS9 <= 3 {
+		if value.gzfx.PS9 <= 2 {
+			fmt.Printf("%c[;;35m  市销率=%f%c[0m ", 0x1B, value.gzfx.PS9, 0x1B)
+		} else if value.gzfx.PS9 <= 3 {
 			fmt.Printf("%c[;;36m  市销率=%f%c[0m ", 0x1B, value.gzfx.PS9, 0x1B)
 		} else {
 			//fmt.Printf(" 市销率=%f", value.gzfx.PS9)
@@ -284,6 +290,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else {
 			//fmt.Printf(" 毛利率=%f", mll)
 		}
+		//3成长-净利润率
 		var jll = stock.ToFloat(single.ZYZB[0].JLL)
 		if jll >= 20 {
 			fmt.Printf("%c[;;36m  净利率=%f%c[0m", 0x1B, jll, 0x1B)
@@ -309,6 +316,8 @@ func exportResult(mapStock map[string]StockInfo) {
 		var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
 		var avg = (tb0 + tb1 + tb2) / 3
 		if avg >= 30 {
+			fmt.Printf("%c[;;35m  3年收入同比平均=%f%c[0m", 0x1B, avg, 0x1B)
+		} else if avg >= 25 {
 			fmt.Printf("%c[;;36m  3年收入同比平均=%f%c[0m", 0x1B, avg, 0x1B)
 		} else {
 			//fmt.Printf(" 3年收入同比平均=%f", avg)
