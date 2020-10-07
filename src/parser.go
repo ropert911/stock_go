@@ -277,10 +277,10 @@ func exportResult(mapStock map[string]StockInfo) {
 		var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
 		var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
 		var avg = (tb0 + tb1 + tb2) / 3
-		if avg >= 20 {
-			fmt.Printf("%c[;;36m  3年收入同比=%f%c[0m", 0x1B, avg, 0x1B)
+		if avg >= 30 {
+			fmt.Printf("%c[;;36m  3年收入同比平均=%f%c[0m", 0x1B, avg, 0x1B)
 		} else {
-			fmt.Printf(" 3年收入同比=%f", avg)
+			fmt.Printf(" 3年收入同比平均=%f", avg)
 		}
 
 		fmt.Println("")
