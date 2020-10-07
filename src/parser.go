@@ -246,6 +246,19 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else {
 			fmt.Printf(" 净益率=%f", value.yjbb.WEIGHTAVG_ROE)
 		}
+		//3成长-毛利率
+		var mll = stock.ToFloat(single.ZYZB[0].MLL)
+		if mll >= 30 {
+			fmt.Printf(" %c[;;36m  毛利率=%f  %c[0m ", 0x1B, mll, 0x1B)
+		} else {
+			fmt.Printf(" 毛利率=%f", mll)
+		}
+		var jll = stock.ToFloat(single.ZYZB[0].JLL)
+		if jll >= 20 {
+			fmt.Printf(" %c[;;36m  净利率=%f  %c[0m ", 0x1B, jll, 0x1B)
+		} else {
+			fmt.Printf(" 净利率=%f", jll)
+		}
 
 		fmt.Println("")
 	}
