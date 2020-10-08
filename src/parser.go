@@ -336,6 +336,15 @@ func exportResult(mapStock map[string]StockInfo) {
 			//fmt.Printf(" 3年收入同比平均=%f", avg)
 		}
 
+		//机构推荐数
+		if single.JGTJ >= 20 {
+			fmt.Printf("%c[;;35m  机构推荐=%d%c[0m", 0x1B, single.JGTJ, 0x1B)
+		} else if single.JGTJ >= 6 {
+			fmt.Printf("%c[;;36m  机构推荐=%d%c[0m", 0x1B, single.JGTJ, 0x1B)
+		} else {
+
+		}
+
 		fmt.Println("")
 	}
 	fmt.Println("符合条件的股票有=", num, "个")
