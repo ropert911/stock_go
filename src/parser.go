@@ -335,12 +335,12 @@ func exportResult(mapStock map[string]StockInfo) {
 			sockInfoShow.PS9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
-		//3成长-净益率
-		if value.yjbb.WEIGHTAVG_ROE >= 17 {
-			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
+		//3成长-净益率 净资产收益率
+		if value.yjbb.WEIGHTAVG_ROE >= 20 {
+			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=%c[;;35m★%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 			fmt.Printf("%c[;;35m  净益率=%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else if value.yjbb.WEIGHTAVG_ROE >= 10 {
-			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
+			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=%c[;;36m%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 			fmt.Printf("%c[;;36m  净益率=%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else {
 			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
@@ -380,10 +380,10 @@ func exportResult(mapStock map[string]StockInfo) {
 		var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
 		var avg = (tb0 + tb1 + tb2) / 3
 		if avg >= 30 {
-			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, avg, 0x1B)
+			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;35m★%f%c[0m", 0x1B, avg, 0x1B)
 			fmt.Printf("%c[;;35m  3年收入同比平均=%f%c[0m", 0x1B, avg, 0x1B)
 		} else if avg >= 25 {
-			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, avg, 0x1B)
+			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;36m%f%c[0m", 0x1B, avg, 0x1B)
 			fmt.Printf("%c[;;36m  3年收入同比平均=%f%c[0m", 0x1B, avg, 0x1B)
 		} else {
 			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
@@ -391,10 +391,10 @@ func exportResult(mapStock map[string]StockInfo) {
 
 		//机构推荐数
 		if single.JGTJ >= 20 {
-			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;35m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
+			sockInfoShow.JGTJ = fmt.Sprintf("机构推荐=%c[;;35m★%d%c[0m", 0x1B, single.JGTJ, 0x1B)
 			fmt.Printf("%c[;;35m  机构推荐=%d%c[0m", 0x1B, single.JGTJ, 0x1B)
 		} else if single.JGTJ >= 6 {
-			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;36m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
+			sockInfoShow.JGTJ = fmt.Sprintf("机构推荐=%c[;;36m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
 			fmt.Printf("%c[;;36m  机构推荐=%d%c[0m", 0x1B, single.JGTJ, 0x1B)
 		} else {
 			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
