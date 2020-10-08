@@ -7,7 +7,8 @@ const (
 	file_stockLrb       = "stock_lrb.data"                   //利润表
 	file_stockXjll      = "stock_xjll.data"                  //现金流量
 	report_singleformat = "report_%s_%s.data"                //个股数据
-	jgdy_singleformate  = "jgdy_%s_%s.data"                  //机构调研
+	jgdy_singleformate  = "jgdy_%s_%s.data"                  //个股-机构调研
+	kx_singleformate    = "kx_%s_%s.data"                    //个股-K线
 	reportDate          = "2020-06-30"                       //报表时间
 	token               = "894050c76af8597a853f5b408b759f5d" //访问用到的token
 	TradeData           = "2020-09-30"                       //最后一个交易日

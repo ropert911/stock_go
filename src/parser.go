@@ -207,6 +207,11 @@ func filterData(mapStock map[string]StockInfo) map[string]StockInfo {
 			delete(mapStock, key)
 			continue
 		}
+		//5其它 -- 近2年<150 每年小于60%
+		if single.THIS >= 60 || single.TWO >= 150 {
+			delete(mapStock, key)
+			continue
+		}
 	}
 
 	return mapStock
