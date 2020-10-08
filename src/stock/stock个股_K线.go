@@ -88,9 +88,9 @@ func ParseKy(code string) (float32, float32, float32) {
 		return 0, 0, 0
 	}
 
-	var this float32
-	var last float32
-	var two float32
+	var this float32 = 0
+	var last float32 = 0
+	var two float32 = 0
 	for i := 0; i < len(klint); i++ {
 		var attr = strings.Split(klint[i], ",")
 		var year = ToInt(attr[0][0:4])
@@ -109,6 +109,10 @@ func ParseKy(code string) (float32, float32, float32) {
 
 	if this != 0 && last != 0 {
 		two = (100+last)*(1+this/100) - 100
+	}
+	if last == 0 { //可能是今年上市的，不受此限制
+		this = 0
+		two = 0
 	}
 
 	return last, this, two
