@@ -12,6 +12,7 @@ type StockInfo struct {
 	yjbb stock.StockYjbb
 	zcfz stock.StockZcfz
 	lrb  stock.StockLrb
+	xjll stock.StockXjll
 }
 
 func main() {
@@ -27,6 +28,7 @@ func parserData() map[string]StockInfo {
 	socksYjbb := stock.ReadStockYjbb()
 	socksZcfz := stock.ReadStockZcfz()
 	stockLrb := stock.ReadStockLrb()
+	stockXjll := stock.ReadStockXjll()
 	for i := 0; i < len(socksgzfx); i++ {
 		var stockInfo StockInfo
 		stockInfo.gzfx = socksgzfx[i]
@@ -45,6 +47,12 @@ func parserData() map[string]StockInfo {
 		for z := 0; z < len(stockLrb); z++ {
 			if socksgzfx[i].SECURITYCODE == stockLrb[z].SECURITY_CODE {
 				stockInfo.lrb = stockLrb[z]
+				break
+			}
+		}
+		for z := 0; z < len(stockXjll); z++ {
+			if socksgzfx[i].SECURITYCODE == stockXjll[z].SECURITY_CODE {
+				stockInfo.xjll = stockXjll[z]
 				break
 			}
 		}
@@ -113,6 +121,11 @@ func filterData(mapStock map[string]StockInfo) map[string]StockInfo {
 		}
 		//4财报 -- 资产负债率>65%的，净资产收益率>10%
 		if value.zcfz.DEBT_ASSET_RATIO >= 65 && value.yjbb.WEIGHTAVG_ROE < 10 {
+			delete(mapStock, key)
+			continue
+		}
+		//4财报 -- 总现金流>0.2亿
+		if value.xjll.CCE_ADD < 20000000 {
 			delete(mapStock, key)
 			continue
 		}
