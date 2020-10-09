@@ -277,6 +277,7 @@ func exportResult(mapStock map[string]StockInfo) {
 			" 行业名=", value.gzfx.HYName,
 		)
 
+		stock.DownloadSingle(key)
 		var single, _ = stock.ParseSingle(key)
 
 		//2积累--每股公积金
@@ -411,7 +412,6 @@ func exportResult(mapStock map[string]StockInfo) {
 	}
 	fmt.Println()
 
-	fmt.Println("符合条件的股票有=", num, "个")
 	t := table.Table(sockInfoShows)
 	fmt.Println(t)
 	fmt.Println(
@@ -419,6 +419,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		"│ 市净率  ", "│ 动态市盈率", "│ 静态市盈率", "│ 市销率  ", "│ 净益率                ",
 		"│ 毛利率(%) ", "│ 净利率(%) ", "│ 3年营收平均               ", "│ 机构推荐 ",
 	)
+	fmt.Println("符合条件的股票有=", num, "个")
 
 	//for f := 30; f <= 37; f++ { // 前景色彩 = 30-37
 	//	fmt.Printf("%c[;;%dm  f=%d  %c[0m ", 0x1B, f, f, 0x1B)
