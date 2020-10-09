@@ -78,8 +78,12 @@ type StockXjll struct {
 
 //现金流量
 func DownloadStockXjll() {
-	file.Delete(file_stockXjll)
-	file.WriteFile(file_stockXjll, "[")
+	var fileName = fmt.Sprintf(file_stockXjllformat, reportDate)
+	if file.FileExist(fileName) {
+		return
+	}
+	file.Delete(fileName)
+	file.WriteFile(fileName, "[")
 
 	var urlFormat = `http://datacenter.eastmoney.com/api/data/get?type=RPT_DMSK_FN_CASHFLOW&sty=ALL&p=%d&ps=%d&st=NOTICE_DATE,SECURITY_CODE&sr=-1,-1&var=FPETiANd&filter=(REPORT_DATE='%s')&rt=%d`
 	var index = 1
@@ -113,21 +117,26 @@ func DownloadStockXjll() {
 		//写内容
 		if len(data) > 10 {
 			if !first {
-				file.AppendFile(file_stockXjll, ",")
+				file.AppendFile(fileName, ",")
 			} else {
 				first = false
 			}
-			file.AppendFile(file_stockXjll, data)
+			file.AppendFile(fileName, data)
 		} else {
 			break
 		}
 	}
-	file.AppendFile(file_stockXjll, "]")
+	file.AppendFile(fileName, "]")
 }
 
 func ReadStockXjll() []StockXjll {
+	var fileName = fmt.Sprintf(file_stockXjllformat, reportDate)
+	if !file.FileExist(fileName) {
+		DownloadStockXjll()
+	}
+
 	//读取数据
-	data, err2 := file.ReadFile_v1(file_stockXjll)
+	data, err2 := file.ReadFile_v1(fileName)
 	if nil != err2 {
 		fmt.Println("error read file ", err2)
 		return nil

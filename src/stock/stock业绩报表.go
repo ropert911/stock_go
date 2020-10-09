@@ -64,8 +64,11 @@ type StockYjbb struct {
 
 //业绩报表
 func DownloadStockYjbb() {
-	file.Delete(file_stockYjbb)
-	file.WriteFile(file_stockYjbb, "[")
+	var fileName = fmt.Sprintf(file_stockYjbbformat, reportDate)
+	if file.FileExist(fileName) {
+		return
+	}
+	file.WriteFile(fileName, "[")
 
 	var urlFormat = `http://datacenter.eastmoney.com/api/data/get?type=RPT_LICO_FN_CPD&sty=ALL&p=%d&ps=%d&st=UPDATE_DATE,SECURITY_CODE&sr=-1,-1&var=sefpfESI&filter=(SECURITY_TYPE_CODE=058001001)(REPORTDATE='%s')&rt=%d`
 	var index = 1
@@ -99,21 +102,26 @@ func DownloadStockYjbb() {
 		//写内容
 		if len(data) > 10 {
 			if !first {
-				file.AppendFile(file_stockYjbb, ",")
+				file.AppendFile(fileName, ",")
 			} else {
 				first = false
 			}
-			file.AppendFile(file_stockYjbb, data)
+			file.AppendFile(fileName, data)
 		} else {
 			break
 		}
 	}
-	file.AppendFile(file_stockYjbb, "]")
+	file.AppendFile(fileName, "]")
 }
 
 func ReadStockYjbb() []StockYjbb {
+	var fileName = fmt.Sprintf(file_stockYjbbformat, reportDate)
+	if !file.FileExist(fileName) {
+		DownloadStockYjbb()
+	}
+
 	//读取数据
-	data, err2 := file.ReadFile_v1(file_stockYjbb)
+	data, err2 := file.ReadFile_v1(fileName)
 	if nil != err2 {
 		fmt.Println("error read file ", err2)
 		return nil

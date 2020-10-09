@@ -61,8 +61,13 @@ type StockGzfx struct {
 
 //估值分析表
 func DownloadStockGzfx() {
-	file.Delete(file_stockGzfx)
-	file.WriteFile(file_stockGzfx, "[")
+	var fileName = fmt.Sprintf(file_stockGzfxformat, TradeData)
+	if file.FileExist(fileName) {
+		return
+	}
+
+	file.Delete(fileName)
+	file.WriteFile(fileName, "[")
 
 	var urlFormat = "http://dcfm.eastmoney.com/EM_MutiSvcExpandInterface/api/js/get?type=GZFX_GGZB&token=%s&st=SECURITYCODE&sr=1&p=%d&ps=%d&filter=(TRADEDATE=^%s^)&rt=%d"
 	var index = 1
@@ -88,22 +93,27 @@ func DownloadStockGzfx() {
 		data := *content
 		if len(data) > 10 {
 			if !first {
-				file.AppendFile(file_stockGzfx, ",")
+				file.AppendFile(fileName, ",")
 			} else {
 				first = false
 			}
 			data = data[1 : len(data)-1]
-			file.AppendFile(file_stockGzfx, data)
+			file.AppendFile(fileName, data)
 		} else {
 			break
 		}
 	}
-	file.AppendFile(file_stockGzfx, "]")
+	file.AppendFile(fileName, "]")
 }
 
 func ReadStockGzfx() []StockGzfx {
+	var fileName = fmt.Sprintf(file_stockGzfxformat, TradeData)
+	if !file.FileExist(fileName) {
+		DownloadStockGzfx()
+	}
+
 	//读取数据
-	data, err2 := file.ReadFile_v1(file_stockGzfx)
+	data, err2 := file.ReadFile_v1(fileName)
 	if nil != err2 {
 		fmt.Println("error read file ", err2)
 		return nil

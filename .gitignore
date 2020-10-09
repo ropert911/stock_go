@@ -1,6 +1,7 @@
 /xqstock.exe
 /stock_go.iml
 /.idea/
+/stock_*.data
 /report_*.data
 /jgdy_*.data
 /kx_*.data

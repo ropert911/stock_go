@@ -76,8 +76,13 @@ type StockLrb struct {
 }
 
 func DownloadStockLrb() {
-	file.Delete(file_stockLrb)
-	file.WriteFile(file_stockLrb, "[")
+	var fileName = fmt.Sprintf(file_stockLrbformat, reportDate)
+	if file.FileExist(fileName) {
+		return
+	}
+
+	file.Delete(fileName)
+	file.WriteFile(fileName, "[")
 
 	var urlFormat = `http://datacenter.eastmoney.com/api/data/get?type=RPT_DMSK_FN_INCOME&sty=ALL&p=%d&ps=%d&st=NOTICE_DATE,SECURITY_CODE&sr=-1,-1&var=lkQKYzdA&filter=(REPORT_DATE='%s')&rt=%d`
 	var index = 1
@@ -111,21 +116,26 @@ func DownloadStockLrb() {
 		//写内容
 		if len(data) > 10 {
 			if !first {
-				file.AppendFile(file_stockLrb, ",")
+				file.AppendFile(fileName, ",")
 			} else {
 				first = false
 			}
-			file.AppendFile(file_stockLrb, data)
+			file.AppendFile(fileName, data)
 		} else {
 			break
 		}
 	}
-	file.AppendFile(file_stockLrb, "]")
+	file.AppendFile(fileName, "]")
 }
 
 func ReadStockLrb() []StockLrb {
+	var fileName = fmt.Sprintf(file_stockLrbformat, reportDate)
+	if !file.FileExist(fileName) {
+		DownloadStockLrb()
+	}
+
 	//读取数据
-	data, err2 := file.ReadFile_v1(file_stockLrb)
+	data, err2 := file.ReadFile_v1(fileName)
 	if nil != err2 {
 		fmt.Println("error read file ", err2)
 		return nil

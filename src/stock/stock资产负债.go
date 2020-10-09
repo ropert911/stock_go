@@ -89,8 +89,12 @@ type StockZcfz struct {
 
 //资产负债
 func DownloadStockZcfz() {
-	file.Delete(file_stockZcfz)
-	file.WriteFile(file_stockZcfz, "[")
+	var fileName = fmt.Sprintf(file_stockZcfzformat, reportDate)
+	if file.FileExist(fileName) {
+		return
+	}
+	file.Delete(fileName)
+	file.WriteFile(fileName, "[")
 
 	var urlFormat = `http://datacenter.eastmoney.com/api/data/get?type=RPT_DMSK_FN_BALANCE&sty=ALL&p=%d&ps=%d&st=NOTICE_DATE,SECURITY_CODE&sr=-1,-1&var=TjVwCDHJ&filter=(REPORT_DATE='%s')&rt=%d`
 	var index = 1
@@ -124,21 +128,26 @@ func DownloadStockZcfz() {
 		//写内容
 		if len(data) > 10 {
 			if !first {
-				file.AppendFile(file_stockZcfz, ",")
+				file.AppendFile(fileName, ",")
 			} else {
 				first = false
 			}
-			file.AppendFile(file_stockZcfz, data)
+			file.AppendFile(fileName, data)
 		} else {
 			break
 		}
 	}
-	file.AppendFile(file_stockZcfz, "]")
+	file.AppendFile(fileName, "]")
 }
 
 func ReadStockZcfz() []StockZcfz {
+	var fileName = fmt.Sprintf(file_stockZcfzformat, reportDate)
+	if !file.FileExist(fileName) {
+		DownloadStockZcfz()
+	}
+
 	//读取数据
-	data, err2 := file.ReadFile_v1(file_stockZcfz)
+	data, err2 := file.ReadFile_v1(fileName)
 	if nil != err2 {
 		fmt.Println("error read file ", err2)
 		return nil
