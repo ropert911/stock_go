@@ -239,19 +239,20 @@ type SockInfoShow struct {
 	HYName        string
 	MGGJJ         string //每股公积金
 	MGWFPLY       string //每股未分配
-	SJL           string //市净率
-	PEJT          string //静态市盈率
-	PEDT          string //动态市盈率
-	PS9           string //市销率
 	WEIGHTAVG_ROE string //净益率
 	MLL           string //毛利率(%)
 	JLL           string //净利率(%)
 	YYZSRAVG      string //营业总收3年平均
 	JGTJ          string //机构推荐数
-	RPB8          string //市净率估值
-	RPE7          string //PE(静)估值
-	RPE9          string //PE(TTM)估值
-	RPS9          string //市销率估值
+
+	SJL  string //市净率
+	PEJT string //静态市盈率
+	PEDT string //动态市盈率
+	PS9  string //市销率
+	RPB8 string //市净率估值
+	RPE7 string //PE(静)估值
+	RPE9 string //PE(TTM)估值
+	RPS9 string //市销率估值
 }
 
 //显示结果
@@ -456,8 +457,8 @@ func exportResult(mapStock map[string]StockInfo) {
 	fmt.Println(t)
 	fmt.Println(
 		"│ 编码   ", "│ 名称       ", "│ 现价  ", "│ 行业        ", "│ 每股公积金", "│ 每股未分配",
+		"│ 净益率                ", "│ 毛利率(%) ", "│ 净利率(%)", "│ 3年营收平均               ", "│ 机构推荐           ",
 		"│ 市净率  ", "│ 市盈(静) ", "│ 市盈(动)  ", "│ 市销率  ",
-		"│ 净益率                ", "│ 毛利率(%) ", "│ 净利率(%) ", "│ 3年营收平均               ", "│ 机构推荐           ",
 		"| 市净估值 ", "| PE静估值", "│ PE(TTM)估值", "│ 市销率估值",
 	)
 	fmt.Println("符合条件的股票有=", num, "个")
