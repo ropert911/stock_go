@@ -248,6 +248,10 @@ type SockInfoShow struct {
 	JLL           string //净利率(%)
 	YYZSRAVG      string //营业总收3年平均
 	JGTJ          string //机构推荐数
+	RPB8          string //市净率估值
+	RPE7          string //PE(静)估值
+	RPE9          string //PE(TTM)估值
+	RPS9          string //市销率估值
 }
 
 //显示结果
@@ -404,6 +408,42 @@ func exportResult(mapStock map[string]StockInfo) {
 			fmt.Printf("%c[;;36m  机构推荐=%d%c[0m", 0x1B, single.JGTJ, 0x1B)
 		} else {
 			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+		}
+
+		var rPB8 = value.gzfx.PB8 / value.gzfx.HY_PB8
+		if rPB8 < 0.7 {
+			sockInfoShow.RPB8 = fmt.Sprintf("市净估值=%c[;;35m%f%c[0m", 0x1B, rPB8, 0x1B)
+		} else if rPB8 < 1 {
+			sockInfoShow.RPB8 = fmt.Sprintf("市净估值=%c[;;36m%f%c[0m", 0x1B, rPB8, 0x1B)
+		} else {
+			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+		}
+
+		var rPE7 = value.gzfx.PE7 / value.gzfx.HY_PE7
+		if rPE7 < 0.8 {
+			sockInfoShow.RPE7 = fmt.Sprintf("PE静估值=%c[;;35m%f%c[0m", 0x1B, rPE7, 0x1B)
+		} else if rPE7 < 1 {
+			sockInfoShow.RPE7 = fmt.Sprintf("PE静估值=%c[;;36m%f%c[0m", 0x1B, rPE7, 0x1B)
+		} else {
+			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+		}
+
+		var rPE9 = value.gzfx.PE9 / value.gzfx.HY_PE9
+		if rPE9 < 0.8 {
+			sockInfoShow.RPE9 = fmt.Sprintf("PE(TTM)估值=%c[;;35m%f%c[0m", 0x1B, rPE9, 0x1B)
+		} else if rPE9 < 1 {
+			sockInfoShow.RPE9 = fmt.Sprintf("PE(TTM)估值=%c[;;36m%f%c[0m", 0x1B, rPE9, 0x1B)
+		} else {
+			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+		}
+
+		var rPS9 = value.gzfx.PS9 / value.gzfx.HY_PS9
+		if rPS9 < 0.8 {
+			sockInfoShow.RPS9 = fmt.Sprintf("市销率估值 =%c[;;35m%f%c[0m", 0x1B, rPS9, 0x1B)
+		} else if rPS9 < 1 {
+			sockInfoShow.RPS9 = fmt.Sprintf("市销率估值 =%c[;;36m★%f%c[0m", 0x1B, rPS9, 0x1B)
+		} else {
+			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
 		fmt.Println()

@@ -53,10 +53,15 @@ type StockGzfx struct {
 	HYName       string  //行业名
 	HYCode       string  //行业编码
 
-	PE9 float32 //动态市盈率
-	PE7 float32 //静态市盈率
 	PB8 float32 //市净率
+	PE7 float32 //静态市盈率
+	PE9 float32 //动态市盈率
 	PS9 float32 //市销率
+
+	HY_PB8 float32 //行业--市净率
+	HY_PE7 float32 //行业--PE(静)
+	HY_PE9 float32 //行业--PE(TTM)
+	HY_PS9 float32 //行业-市销率
 }
 
 //估值分析表
