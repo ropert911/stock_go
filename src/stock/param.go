@@ -1,11 +1,11 @@
 package stock
 
 const (
-	file_stockGzfxformat = "stock_gzfx_%s.data"               //股票估计数据
-	file_stockYjbbformat = "stock_yjbb_%s.data"               //业绩报表
-	file_stockZcfzformat = "stock_zcfz_%s.data"               //资产负债
-	file_stockLrbformat  = "stock_lrb_%s.data"                //利润表
-	file_stockXjllformat = "stock_xjll_%s.data"               //现金流量
+	file_stockGzfxformat = "stock_估值分析_%s.data"               //股票估值数据
+	file_stockYjbbformat = "stock_业绩报表_%s.data"               //业绩报表
+	file_stockZcfzformat = "stock_资产负债_%s.data"               //资产负债
+	file_stockLrbformat  = "stock_利润表_%s.data"                //利润表
+	file_stockXjllformat = "stock_现金流量_%s.data"               //现金流量
 	report_singleformat  = "report_%s_%s.data"                //个股数据
 	jgdy_singleformate   = "jgdy_%s_%s.data"                  //个股-机构调研
 	kx_singleformate     = "kx_%s_%s.data"                    //个股-K线
