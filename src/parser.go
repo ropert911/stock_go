@@ -347,7 +347,7 @@ func exportResult(mapStock map[string]StockInfo) {
 
 		//3成长-净益率 净资产收益率
 		if value.yjbb.WEIGHTAVG_ROE >= 20 {
-			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=%c[;;35m★%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
+			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=★%c[;;35m%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 			fmt.Printf("%c[;;35m  净益率=%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else if value.yjbb.WEIGHTAVG_ROE >= 10 {
 			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=%c[;;36m%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
@@ -441,7 +441,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		if rPS9 < 0.8 {
 			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, rPS9, 0x1B)
 		} else if rPS9 < 1 {
-			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;36m★%f%c[0m", 0x1B, rPS9, 0x1B)
+			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, rPS9, 0x1B)
 		} else {
 			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
