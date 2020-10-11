@@ -240,8 +240,8 @@ type SockInfoShow struct {
 	MGGJJ         string //每股公积金
 	MGWFPLY       string //每股未分配
 	SJL           string //市净率
-	PEDT          string //动态市盈率
 	PEJT          string //静态市盈率
+	PEDT          string //动态市盈率
 	PS9           string //市销率
 	WEIGHTAVG_ROE string //净益率
 	MLL           string //毛利率(%)
@@ -261,7 +261,7 @@ func exportResult(mapStock map[string]StockInfo) {
 	var sockInfoShows = []SockInfoShow{
 		//	{
 		//	"编码", "名称", "现价", "行业", "每股公积金", "每股未分配",
-		//	"市净率", "动态市盈率", "静态市盈率", "市销率", "净益率",
+		//	"市净率",  "静态市盈率","动态市盈率", "市销率", "净益率",
 		//	"毛利率(%)", "净利率(%)", "3年营收平均", "机构推荐",
 		//}
 	}
@@ -412,36 +412,36 @@ func exportResult(mapStock map[string]StockInfo) {
 
 		var rPB8 = value.gzfx.PB8 / value.gzfx.HY_PB8
 		if rPB8 < 0.7 {
-			sockInfoShow.RPB8 = fmt.Sprintf("市净估值=%c[;;35m%f%c[0m", 0x1B, rPB8, 0x1B)
+			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, rPB8, 0x1B)
 		} else if rPB8 < 1 {
-			sockInfoShow.RPB8 = fmt.Sprintf("市净估值=%c[;;36m%f%c[0m", 0x1B, rPB8, 0x1B)
+			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, rPB8, 0x1B)
 		} else {
 			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
 		var rPE7 = value.gzfx.PE7 / value.gzfx.HY_PE7
 		if rPE7 < 0.8 {
-			sockInfoShow.RPE7 = fmt.Sprintf("PE静估值=%c[;;35m%f%c[0m", 0x1B, rPE7, 0x1B)
+			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, rPE7, 0x1B)
 		} else if rPE7 < 1 {
-			sockInfoShow.RPE7 = fmt.Sprintf("PE静估值=%c[;;36m%f%c[0m", 0x1B, rPE7, 0x1B)
+			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, rPE7, 0x1B)
 		} else {
 			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
 		var rPE9 = value.gzfx.PE9 / value.gzfx.HY_PE9
 		if rPE9 < 0.8 {
-			sockInfoShow.RPE9 = fmt.Sprintf("PE(TTM)估值=%c[;;35m%f%c[0m", 0x1B, rPE9, 0x1B)
+			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, rPE9, 0x1B)
 		} else if rPE9 < 1 {
-			sockInfoShow.RPE9 = fmt.Sprintf("PE(TTM)估值=%c[;;36m%f%c[0m", 0x1B, rPE9, 0x1B)
+			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, rPE9, 0x1B)
 		} else {
 			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
 		var rPS9 = value.gzfx.PS9 / value.gzfx.HY_PS9
 		if rPS9 < 0.8 {
-			sockInfoShow.RPS9 = fmt.Sprintf("市销率估值 =%c[;;35m%f%c[0m", 0x1B, rPS9, 0x1B)
+			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, rPS9, 0x1B)
 		} else if rPS9 < 1 {
-			sockInfoShow.RPS9 = fmt.Sprintf("市销率估值 =%c[;;36m★%f%c[0m", 0x1B, rPS9, 0x1B)
+			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;36m★%f%c[0m", 0x1B, rPS9, 0x1B)
 		} else {
 			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
@@ -455,9 +455,10 @@ func exportResult(mapStock map[string]StockInfo) {
 	t := table.Table(sockInfoShows)
 	fmt.Println(t)
 	fmt.Println(
-		"│ 编码   ", "│ 名称       ", "│ 现价 ", "│ 行业        ", "│ 每股公积金", "│ 每股未分配",
-		"│ 市净率  ", "│ 动态市盈率", "│ 静态市盈率", "│ 市销率  ", "│ 净益率                ",
-		"│ 毛利率(%) ", "│ 净利率(%) ", "│ 3年营收平均               ", "│ 机构推荐 ",
+		"│ 编码   ", "│ 名称       ", "│ 现价  ", "│ 行业        ", "│ 每股公积金", "│ 每股未分配",
+		"│ 市净率  ", "│ 市盈(静) ", "│ 市盈(动)  ", "│ 市销率  ",
+		"│ 净益率                ", "│ 毛利率(%) ", "│ 净利率(%) ", "│ 3年营收平均               ", "│ 机构推荐           ",
+		"| 市净估值 ", "| PE静估值", "│ PE(TTM)估值", "│ 市销率估值",
 	)
 	fmt.Println("符合条件的股票有=", num, "个")
 
