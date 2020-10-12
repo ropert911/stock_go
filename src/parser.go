@@ -279,12 +279,6 @@ func exportResult(mapStock map[string]StockInfo) {
 		sockInfoShow.Name = value.gzfx.SName
 		sockInfoShow.Price = fmt.Sprint(value.gzfx.NEW)
 		sockInfoShow.HYName = value.gzfx.HYName
-		fmt.Print(
-			"代码=", key,
-			"  名称=", value.gzfx.SName,
-			" 最新价=", value.gzfx.NEW,
-			" 行业名=", value.gzfx.HYName,
-		)
 
 		stock.DownloadSingle(key)
 		var single, _ = stock.ParseSingle(key)
@@ -292,87 +286,72 @@ func exportResult(mapStock map[string]StockInfo) {
 		//2积累--每股公积金
 		var mggjj = stock.ToFloat(single.ZYZB[0].MGGJJ)
 		if mggjj*3 > float64(value.gzfx.NEW) || mggjj > 10 {
-			sockInfoShow.MGGJJ = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, mggjj, 0x1B)
-			fmt.Printf("%c[;;35m  每股公积金=%f%c[0m ", 0x1B, mggjj, 0x1B)
+			sockInfoShow.MGGJJ = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, mggjj, 0x1B)
 		} else if mggjj*4 > float64(value.gzfx.NEW) || mggjj > 8 {
-			sockInfoShow.MGGJJ = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, mggjj, 0x1B)
-			fmt.Printf("%c[;;36m  每股公积金=%f%c[0m ", 0x1B, mggjj, 0x1B)
+			sockInfoShow.MGGJJ = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, mggjj, 0x1B)
 		} else {
 			sockInfoShow.MGGJJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 		//1积累--每股未分配利润
 		var mgwfply = stock.ToFloat(single.ZYZB[0].MGWFPLY)
 		if mgwfply*3 > float64(value.gzfx.NEW) || mgwfply > 10 {
-			sockInfoShow.MGWFPLY = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, mgwfply, 0x1B)
-			fmt.Printf("%c[;;35m  每股未分配利润=%f%c[0m ", 0x1B, mgwfply, 0x1B)
+			sockInfoShow.MGWFPLY = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, mgwfply, 0x1B)
 		} else if mgwfply*4 > float64(value.gzfx.NEW) || mgwfply > 8 {
-			sockInfoShow.MGWFPLY = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, mgwfply, 0x1B)
-			fmt.Printf("%c[;;36m  每股未分配利润=%f%c[0m ", 0x1B, mgwfply, 0x1B)
+			sockInfoShow.MGWFPLY = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, mgwfply, 0x1B)
 		} else {
 			sockInfoShow.MGWFPLY = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
 		//2估值-市净率
 		if value.gzfx.PB8 <= 5 {
-			sockInfoShow.SJL = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, value.gzfx.PB8, 0x1B)
-			fmt.Printf("%c[;;36m  市净率=%f%c[0m ", 0x1B, value.gzfx.PB8, 0x1B)
+			sockInfoShow.SJL = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.gzfx.PB8, 0x1B)
 		} else {
 			sockInfoShow.SJL = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 		//2估值-动态市盈率
 		if value.gzfx.PE9 <= 15 {
-			sockInfoShow.PEDT = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, value.gzfx.PE9, 0x1B)
-			fmt.Printf("%c[;;35m  动态市盈率=%f%c[0m ", 0x1B, value.gzfx.PE9, 0x1B)
+			sockInfoShow.PEDT = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, value.gzfx.PE9, 0x1B)
 		} else if value.gzfx.PE9 <= 25 {
-			sockInfoShow.PEDT = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, value.gzfx.PE9, 0x1B)
-			fmt.Printf("%c[;;36m  动态市盈率=%f%c[0m ", 0x1B, value.gzfx.PE9, 0x1B)
+			sockInfoShow.PEDT = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.gzfx.PE9, 0x1B)
 		} else {
 			sockInfoShow.PEDT = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 		//2估值-静态市盈率
 		if value.gzfx.PE7 <= 15 {
-			sockInfoShow.PEJT = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, value.gzfx.PE7, 0x1B)
-			fmt.Printf("%c[;;35m  静态市盈率=%f%c[0m ", 0x1B, value.gzfx.PE7, 0x1B)
+			sockInfoShow.PEJT = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, value.gzfx.PE7, 0x1B)
 		} else if value.gzfx.PE7 <= 25 {
-			sockInfoShow.PEJT = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, value.gzfx.PE7, 0x1B)
-			fmt.Printf("%c[;;36m  静态市盈率=%f%c[0m ", 0x1B, value.gzfx.PE7, 0x1B)
+			sockInfoShow.PEJT = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.gzfx.PE7, 0x1B)
 		} else {
 			sockInfoShow.PEJT = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 		//2估值-市销率
 		if value.gzfx.PS9 <= 2 {
-			sockInfoShow.PS9 = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, value.gzfx.PS9, 0x1B)
-			fmt.Printf("%c[;;35m  市销率=%f%c[0m ", 0x1B, value.gzfx.PS9, 0x1B)
+			sockInfoShow.PS9 = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, value.gzfx.PS9, 0x1B)
 		} else if value.gzfx.PS9 <= 3 {
-			sockInfoShow.PS9 = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, value.gzfx.PS9, 0x1B)
-			fmt.Printf("%c[;;36m  市销率=%f%c[0m ", 0x1B, value.gzfx.PS9, 0x1B)
+			sockInfoShow.PS9 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.gzfx.PS9, 0x1B)
 		} else {
 			sockInfoShow.PS9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
 		//3成长-净益率 净资产收益率
 		if value.yjbb.WEIGHTAVG_ROE >= 20 {
-			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=★%c[;;35m%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
-			fmt.Printf("%c[;;35m  净益率=%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
+			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=★%c[;;35m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else if value.yjbb.WEIGHTAVG_ROE >= 10 {
-			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=%c[;;36m%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
-			fmt.Printf("%c[;;36m  净益率=%f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
+			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=%c[;;36m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else {
 			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 		//3成长-毛利率
 		var mll = stock.ToFloat(single.ZYZB[0].MLL)
 		if mll >= 30 {
-			sockInfoShow.MLL = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, mll, 0x1B)
-			fmt.Printf("%c[;;36m  毛利率=%f%c[0m", 0x1B, mll, 0x1B)
+			sockInfoShow.MLL = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, mll, 0x1B)
 		} else {
 			sockInfoShow.MLL = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 		//3成长-净利润率
 		var jll = stock.ToFloat(single.ZYZB[0].JLL)
 		if jll >= 20 {
-			sockInfoShow.JLL = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, jll, 0x1B)
-			fmt.Printf("%c[;;36m  净利率=%f%c[0m", 0x1B, jll, 0x1B)
+			sockInfoShow.JLL = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, jll, 0x1B)
 		} else {
 			sockInfoShow.JLL = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
@@ -395,11 +374,9 @@ func exportResult(mapStock map[string]StockInfo) {
 		var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
 		var avg = (tb0 + tb1 + tb2) / 3
 		if avg >= 30 {
-			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;35m★%f%c[0m", 0x1B, avg, 0x1B)
-			fmt.Printf("%c[;;35m  3年收入同比平均=%f%c[0m", 0x1B, avg, 0x1B)
+			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;35m★%.2f%c[0m", 0x1B, avg, 0x1B)
 		} else if avg >= 25 {
-			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;36m%f%c[0m", 0x1B, avg, 0x1B)
-			fmt.Printf("%c[;;36m  3年收入同比平均=%f%c[0m", 0x1B, avg, 0x1B)
+			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;36m%.2f%c[0m", 0x1B, avg, 0x1B)
 		} else {
 			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
@@ -407,46 +384,44 @@ func exportResult(mapStock map[string]StockInfo) {
 		//机构推荐数
 		if single.JGTJ >= 20 {
 			sockInfoShow.JGTJ = fmt.Sprintf("机构推荐=%c[;;35m★%d%c[0m", 0x1B, single.JGTJ, 0x1B)
-			fmt.Printf("%c[;;35m  机构推荐=%d%c[0m", 0x1B, single.JGTJ, 0x1B)
 		} else if single.JGTJ >= 6 {
 			sockInfoShow.JGTJ = fmt.Sprintf("机构推荐=%c[;;36m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
-			fmt.Printf("%c[;;36m  机构推荐=%d%c[0m", 0x1B, single.JGTJ, 0x1B)
 		} else {
 			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
 		var rPB8 = value.gzfx.PB8 / value.gzfx.HY_PB8
 		if rPB8 < 0.7 {
-			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, rPB8, 0x1B)
+			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, rPB8, 0x1B)
 		} else if rPB8 < 1 {
-			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, rPB8, 0x1B)
+			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPB8, 0x1B)
 		} else {
 			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
 		var rPE7 = value.gzfx.PE7 / value.gzfx.HY_PE7
 		if rPE7 < 0.8 {
-			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, rPE7, 0x1B)
+			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, rPE7, 0x1B)
 		} else if rPE7 < 1 {
-			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, rPE7, 0x1B)
+			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPE7, 0x1B)
 		} else {
 			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
 		var rPE9 = value.gzfx.PE9 / value.gzfx.HY_PE9
 		if rPE9 < 0.8 {
-			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, rPE9, 0x1B)
+			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, rPE9, 0x1B)
 		} else if rPE9 < 1 {
-			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, rPE9, 0x1B)
+			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPE9, 0x1B)
 		} else {
 			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
 		var rPS9 = value.gzfx.PS9 / value.gzfx.HY_PS9
 		if rPS9 < 0.8 {
-			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;35m%f%c[0m", 0x1B, rPS9, 0x1B)
+			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, rPS9, 0x1B)
 		} else if rPS9 < 1 {
-			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, rPS9, 0x1B)
+			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPS9, 0x1B)
 		} else {
 			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
@@ -455,7 +430,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		if "--" != single.Gbyj.GDRS[0].QSDGDCGHJ {
 			var sdgdzb = stock.ToFloat(single.Gbyj.GDRS[0].QSDGDCGHJ)
 			if sdgdzb > 40 {
-				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, sdgdzb, 0x1B)
+				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, sdgdzb, 0x1B)
 			} else {
 				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 			}
@@ -467,7 +442,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		if "--" != single.Gbyj.GDRS[0].QSDLTGDCGHJ {
 			var sdltgdzb = stock.ToFloat(single.Gbyj.GDRS[0].QSDLTGDCGHJ)
 			if sdltgdzb > 35 {
-				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, sdltgdzb, 0x1B)
+				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, sdltgdzb, 0x1B)
 			} else {
 				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 			}
@@ -479,19 +454,16 @@ func exportResult(mapStock map[string]StockInfo) {
 			if strings.Contains(single.Gbyj.ZLCC[i].JGLX, "社保") {
 				if "--" != single.Gbyj.ZLCC[i].ZLTGBL {
 					var sbbl = stock.ToFloat(strings.ReplaceAll(single.Gbyj.ZLCC[i].ZLTGBL, "%", ""))
-					sockInfoShow.SBZB = fmt.Sprintf("%f", sbbl)
+					sockInfoShow.SBZB = fmt.Sprintf("%.2f", sbbl)
 				}
 			} else if strings.Contains(single.Gbyj.ZLCC[i].JGLX, "合计") {
 				var hjbl = stock.ToFloat(strings.ReplaceAll(single.Gbyj.ZLCC[i].ZLTGBL, "%", ""))
-				sockInfoShow.JGZB = fmt.Sprintf("%f", hjbl)
+				sockInfoShow.JGZB = fmt.Sprintf("%.2f", hjbl)
 			}
 		}
 
-		fmt.Println()
-
 		sockInfoShows = append(sockInfoShows, sockInfoShow)
 	}
-	fmt.Println()
 
 	t := table.Table(sockInfoShows)
 	fmt.Println(t)
