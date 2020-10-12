@@ -33,7 +33,7 @@ func WriteFile(filename, data string) {
 
 	//fmt.Println(data)
 	// 方式一
-	_, _ = fmt.Fprintf(fileObj, data)
+	_, _ = fmt.Fprintf(fileObj, "%s", data)
 	fileObj.Close()
 
 	// 方式二
@@ -79,7 +79,7 @@ func ReadFile_v1(filename string) (string, error) {
 }
 
 // 还有种方法
-func Readfile_v2(filename string) {
+func Readfile_v2(filename string) string {
 	var (
 		err     error
 		content []byte
@@ -87,7 +87,7 @@ func Readfile_v2(filename string) {
 	content, err = ioutil.ReadFile(filename)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return ""
 	}
-	fmt.Println(string(content))
+	return string(content)
 }

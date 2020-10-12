@@ -245,14 +245,18 @@ type SockInfoShow struct {
 	YYZSRAVG      string //营业总收3年平均
 	JGTJ          string //机构推荐数
 
-	SJL  string //市净率
-	PEJT string //静态市盈率
-	PEDT string //动态市盈率
-	PS9  string //市销率
-	RPB8 string //市净率估值
-	RPE7 string //PE(静)估值
-	RPE9 string //PE(TTM)估值
-	RPS9 string //市销率估值
+	SJL         string //市净率
+	PEJT        string //静态市盈率
+	PEDT        string //动态市盈率
+	PS9         string //市销率
+	RPB8        string //市净率估值
+	RPE7        string //PE(静)估值
+	RPE9        string //PE(TTM)估值
+	RPS9        string //市销率估值
+	QSDGDCGHJ   string //前十大股东持股合计
+	QSDLTGDCGHJ string //前十大流通股东持股合计
+	SBZB        string //社保占流通比
+	JGZB        string //机构合计占流通比
 }
 
 //显示结果
@@ -447,6 +451,42 @@ func exportResult(mapStock map[string]StockInfo) {
 			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
+		//前十大股东持股合计
+		if "--" != single.Gbyj.GDRS[0].QSDGDCGHJ {
+			var sdgdzb = stock.ToFloat(single.Gbyj.GDRS[0].QSDGDCGHJ)
+			if sdgdzb > 40 {
+				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, sdgdzb, 0x1B)
+			} else {
+				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			}
+		} else {
+			sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+		}
+
+		//前十大流通股东持股合计
+		if "--" != single.Gbyj.GDRS[0].QSDLTGDCGHJ {
+			var sdltgdzb = stock.ToFloat(single.Gbyj.GDRS[0].QSDLTGDCGHJ)
+			if sdltgdzb > 35 {
+				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;36m%f%c[0m", 0x1B, sdltgdzb, 0x1B)
+			} else {
+				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			}
+		} else {
+			sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+		}
+
+		for i := 0; i < len(single.Gbyj.ZLCC); i++ {
+			if strings.Contains(single.Gbyj.ZLCC[i].JGLX, "社保") {
+				if "--" != single.Gbyj.ZLCC[i].ZLTGBL {
+					var sbbl = stock.ToFloat(strings.ReplaceAll(single.Gbyj.ZLCC[i].ZLTGBL, "%", ""))
+					sockInfoShow.SBZB = fmt.Sprintf("%f", sbbl)
+				}
+			} else if strings.Contains(single.Gbyj.ZLCC[i].JGLX, "合计") {
+				var hjbl = stock.ToFloat(strings.ReplaceAll(single.Gbyj.ZLCC[i].ZLTGBL, "%", ""))
+				sockInfoShow.JGZB = fmt.Sprintf("%f", hjbl)
+			}
+		}
+
 		fmt.Println()
 
 		sockInfoShows = append(sockInfoShows, sockInfoShow)
@@ -459,7 +499,8 @@ func exportResult(mapStock map[string]StockInfo) {
 		"│ 编码   ", "│ 名称       ", "│ 现价  ", "│ 行业        ", "│ 每股公积金", "│ 每股未分配",
 		"│ 净益率                ", "│ 毛利率(%) ", "│ 净利率(%)", "│ 3年营收平均               ", "│ 机构推荐           ",
 		"│ 市净率  ", "│ 市盈(静) ", "│ 市盈(动)  ", "│ 市销率  ",
-		"| 市净估值 ", "| PE静估值", "│ PE(TTM)估值", "│ 市销率估值",
+		"| 市净估值 ", "| PE静估值", "│ PET估值 ", "│ 市销率估值",
+		"|十大占比 ", "| 十流占比  ", "| 社保占流通比", "|机构合计占流通比",
 	)
 	fmt.Println("符合条件的股票有=", num, "个")
 
