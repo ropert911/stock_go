@@ -12,7 +12,7 @@ const (
 	kx_singleformate     = "%s_年K线_%s.data"                   //个股-K线
 	reportDate           = "2020-06-30"                       //报表时间
 	token                = "894050c76af8597a853f5b408b759f5d" //访问用到的token
-	TradeData            = "2020-10-12"                       //最后一个交易日
+	TradeData            = "2020-10-13"                       //最后一个交易日
 )
 
 //http://data.eastmoney.com/gzfx/hylist.html		行业估值分析
