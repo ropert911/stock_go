@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/modood/table"
+	"sort"
 	"stock"
 	"strings"
 	"util/file"
@@ -245,33 +246,31 @@ type SockInfoShow struct {
 	YYZSRAVG      string //营业总收3年平均
 	JGTJ          string //机构推荐数
 
-	SJL         string //市净率
-	PEJT        string //静态市盈率
-	PEDT        string //动态市盈率
-	PS9         string //市销率
-	RPB8        string //市净率估值
-	RPE7        string //PE(静)估值
-	RPE9        string //PE(TTM)估值
-	RPS9        string //市销率估值
-	QSDGDCGHJ   string //前十大股东持股合计
-	QSDLTGDCGHJ string //前十大流通股东持股合计
-	SBZB        string //社保占流通比
-	JGZB        string //机构合计占流通比
+	SJL         string  //市净率
+	PEJT        string  //静态市盈率
+	PEDT        string  //动态市盈率
+	PS9         string  //市销率
+	RPB8        string  //市净率估值
+	RPE7        string  //PE(静)估值
+	RPE9        string  //PE(TTM)估值
+	RPS9        string  //市销率估值
+	QSDGDCGHJ   string  //前十大股东持股合计
+	QSDLTGDCGHJ string  //前十大流通股东持股合计
+	SBZB        string  //社保占流通比
+	JGZB        float64 //机构合计占流通比
 }
+type SockInfoShowArray []SockInfoShow
+
+func (s SockInfoShowArray) Len() int           { return len(s) }
+func (s SockInfoShowArray) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+func (s SockInfoShowArray) Less(i, j int) bool { return s[i].JGZB >= s[j].JGZB }
 
 //显示结果
 func exportResult(mapStock map[string]StockInfo) {
 	CreateExportEBK(mapStock)
 
-	var sockInfoShows = []SockInfoShow{
-		//	{
-		//	"编码", "名称", "现价", "行业", "每股公积金", "每股未分配",
-		//	"市净率",  "静态市盈率","动态市盈率", "市销率", "净益率",
-		//	"毛利率(%)", "净利率(%)", "3年营收平均", "机构推荐",
-		//}
-	}
+	var sockInfoShows = SockInfoShowArray{}
 
-	var num = len(mapStock)
 	//把符合条件股票中的亮点数据显示出来
 	for key, value := range mapStock {
 		var sockInfoShow SockInfoShow
@@ -427,7 +426,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		}
 
 		//前十大股东持股合计
-		if "--" != single.Gbyj.GDRS[0].QSDGDCGHJ {
+		if len(single.Gbyj.GDRS) > 0 && "--" != single.Gbyj.GDRS[0].QSDGDCGHJ {
 			var sdgdzb = stock.ToFloat(single.Gbyj.GDRS[0].QSDGDCGHJ)
 			if sdgdzb > 40 {
 				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, sdgdzb, 0x1B)
@@ -439,7 +438,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		}
 
 		//前十大流通股东持股合计
-		if "--" != single.Gbyj.GDRS[0].QSDLTGDCGHJ {
+		if len(single.Gbyj.GDRS) > 0 && "--" != single.Gbyj.GDRS[0].QSDLTGDCGHJ {
 			var sdltgdzb = stock.ToFloat(single.Gbyj.GDRS[0].QSDLTGDCGHJ)
 			if sdltgdzb > 35 {
 				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, sdltgdzb, 0x1B)
@@ -450,21 +449,22 @@ func exportResult(mapStock map[string]StockInfo) {
 			sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
+		sockInfoShow.SBZB = ""
+		sockInfoShow.JGZB = 0
 		for i := 0; i < len(single.Gbyj.ZLCC); i++ {
-			if strings.Contains(single.Gbyj.ZLCC[i].JGLX, "社保") {
-				if "--" != single.Gbyj.ZLCC[i].ZLTGBL {
-					var sbbl = stock.ToFloat(strings.ReplaceAll(single.Gbyj.ZLCC[i].ZLTGBL, "%", ""))
-					sockInfoShow.SBZB = fmt.Sprintf("%.2f", sbbl)
-				}
+			if strings.Contains(single.Gbyj.ZLCC[i].JGLX, "社保") && "--" != single.Gbyj.ZLCC[i].ZLTGBL {
+				var sbbl = stock.ToFloat(strings.ReplaceAll(single.Gbyj.ZLCC[i].ZLTGBL, "%", ""))
+				sockInfoShow.SBZB = fmt.Sprintf("%.2f", sbbl)
 			} else if strings.Contains(single.Gbyj.ZLCC[i].JGLX, "合计") {
 				var hjbl = stock.ToFloat(strings.ReplaceAll(single.Gbyj.ZLCC[i].ZLTGBL, "%", ""))
-				sockInfoShow.JGZB = fmt.Sprintf("%.2f", hjbl)
+				sockInfoShow.JGZB = hjbl
 			}
 		}
 
 		sockInfoShows = append(sockInfoShows, sockInfoShow)
 	}
 
+	sort.Stable(sockInfoShows)
 	t := table.Table(sockInfoShows)
 	fmt.Println(t)
 	fmt.Println(
@@ -474,6 +474,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		"|市净估", "|PE静", "│PET估", "│ 市销 ",
 		"|十大占", "|十流占", "| 社流占", "|合流占",
 	)
+	var num = len(sockInfoShows)
 	fmt.Println("符合条件的股票有=", num, "个")
 
 	//for f := 30; f <= 37; f++ { // 前景色彩 = 30-37
