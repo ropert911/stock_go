@@ -372,10 +372,10 @@ func exportResult(mapStock map[string]StockInfo) {
 		var tb0 = stock.ToFloat(single.ZYZB[0].YYZSRTBZZ)
 		var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
 		var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
-		var avg = math.Cbrt((1 + tb0) * (1 + tb1) * (1 + tb2))
+		var avg = math.Cbrt((1+tb0/100)*(1+tb1/100)*(1+tb2/100))*100 - 100
 		if avg >= 30 {
 			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;35m★%.2f%c[0m", 0x1B, avg, 0x1B)
-		} else if avg >= 25 {
+		} else if avg >= 20 {
 			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;36m%.2f%c[0m", 0x1B, avg, 0x1B)
 		} else {
 			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
