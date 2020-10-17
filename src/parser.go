@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/modood/table"
 	"math"
 	"sort"
 	"stock"
 	"strings"
+	"unicode"
 	"util/file"
 )
 
@@ -337,9 +337,9 @@ func exportResult(mapStock map[string]StockInfo) {
 
 		//3成长-净益率 净资产收益率
 		if value.yjbb.WEIGHTAVG_ROE >= 20 {
-			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=%c[;;35m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
+			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else if value.yjbb.WEIGHTAVG_ROE >= 10 {
-			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=%c[;;36m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
+			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else {
 			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
@@ -376,9 +376,9 @@ func exportResult(mapStock map[string]StockInfo) {
 		var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
 		var avg = math.Cbrt((1+tb0/100)*(1+tb1/100)*(1+tb2/100))*100 - 100
 		if avg >= 30 {
-			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;35m%.2f%c[0m", 0x1B, avg, 0x1B)
+			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, avg, 0x1B)
 		} else if avg >= 20 {
-			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;36m%.2f%c[0m", 0x1B, avg, 0x1B)
+			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, avg, 0x1B)
 		} else {
 			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;30m %c[0m", 0x1B, 0x1B)
 		}
@@ -461,25 +461,76 @@ func exportResult(mapStock map[string]StockInfo) {
 
 		//机构推荐数
 		if single.JGTJ >= 20 {
-			sockInfoShow.JGTJ = fmt.Sprintf("推荐=%c[;;35m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
+			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;35m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
 		} else if single.JGTJ >= 6 {
-			sockInfoShow.JGTJ = fmt.Sprintf("推荐=%c[;;36m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
+			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;36m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
 		} else {
 			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
 		}
 
 		sockInfoShows = append(sockInfoShows, sockInfoShow)
 	}
-
 	sort.Stable(sockInfoShows)
-	t := table.Table(sockInfoShows)
-	fmt.Println(t)
-	fmt.Println(
-		"│ 编码   ", "│ 名称       ", "│ 现价  ", "│ 行业        ",
-		"│ 3年营收平均      ", "│ 毛利率", "│ 净利率", "│ 净益率        ", "│公积金 ", "│未分配", //成长-高利润
-		"│市净率", "│ PE静 ", "│ PE动 ", "│市销率", "|市净估", "|PE静", "│PET估", "│ 市销 ", //估值
-		"|十大占", "|十流占 ", "| 社/流", "|机/流 ", "│机构推荐   ", //主力
-	)
+
+	fmt.Printf("|%7s|%10s|%7s|%7s", "Code", "Name", "Price", "行业")
+	fmt.Printf("||%5s|%3s|%3s|%4s|%3s|%4s", "收入增长", "毛利润", "净利率", "净益率", "公积金", "未分配")
+	fmt.Printf("||%4s|%5s|%5s|%3s|%3s|%4s|%4s|%3s", "市净", "PE静", "PE动", "市销率", "市净比", "PE比", "PET比", "市销比")
+	fmt.Printf("||%3s|%3s|%5s|%4s|%2s", "十股占", "十流占", "社/流", "机/流", "推荐")
+
+	fmt.Printf("|")
+	fmt.Println()
+	for i := 0; i < len(sockInfoShows); i++ {
+		var stock = sockInfoShows[i]
+		fmt.Printf("|")
+		fmt.Printf("%7s", stock.Code)
+
+		fmt.Printf("|")
+		var rLen = len(stock.Name) - ChineseCount(stock.Name)
+		var bLen = 10 - rLen
+		for bLen > 0 {
+			fmt.Printf(" ")
+			bLen--
+		}
+		fmt.Printf("%s", stock.Name)
+
+		fmt.Printf("|%7s", stock.Price)
+
+		fmt.Printf("|")
+		rLen = len(stock.HYName) - ChineseCount(stock.HYName)
+		bLen = 10 - rLen
+		for bLen > 0 {
+			fmt.Printf(" ")
+			bLen--
+		}
+		fmt.Printf("%s", stock.HYName)
+
+		//成长-有利润
+		fmt.Printf("||%19s", stock.YYZSRAVG)
+		fmt.Printf("|%17s", stock.MLL)
+		fmt.Printf("|%17s", stock.JLL)
+		fmt.Printf("|%17s", stock.WEIGHTAVG_ROE)
+		fmt.Printf("|%17s", stock.MGGJJ)
+		fmt.Printf("|%17s", stock.MGWFPLY)
+
+		//估值类
+		fmt.Printf("||%17s", stock.SJL)
+		fmt.Printf("|%17s", stock.PEJT)
+		fmt.Printf("|%17s", stock.PEDT)
+		fmt.Printf("|%17s", stock.PS9)
+		fmt.Printf("|%16s", stock.RPB8)
+		fmt.Printf("|%16s", stock.RPE7)
+		fmt.Printf("|%16s", stock.RPE9)
+		fmt.Printf("|%16s", stock.RPS9)
+
+		//主力研究
+		fmt.Printf("||%17s", stock.QSDGDCGHJ)
+		fmt.Printf("|%17s", stock.QSDLTGDCGHJ)
+		fmt.Printf("|%6s", stock.SBZB)
+		fmt.Printf("| %.2f", stock.JGZB)
+		fmt.Printf("|%15s", stock.JGTJ)
+
+		fmt.Println("|")
+	}
 	var num = len(sockInfoShows)
 	fmt.Println("符合条件的股票有=", num, "个")
 
@@ -487,4 +538,14 @@ func exportResult(mapStock map[string]StockInfo) {
 	//	fmt.Printf("%c[;;%dm  f=%d  %c[0m ", 0x1B, f, f, 0x1B)
 	//	fmt.Println("")
 	//}
+}
+
+func ChineseCount(str1 string) (count int) {
+	for _, char := range str1 {
+		if unicode.Is(unicode.Han, char) {
+			count++
+		}
+	}
+
+	return
 }
