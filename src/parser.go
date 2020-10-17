@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/modood/table"
+	"math"
 	"sort"
 	"stock"
 	"strings"
@@ -371,7 +372,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		var tb0 = stock.ToFloat(single.ZYZB[0].YYZSRTBZZ)
 		var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
 		var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
-		var avg = (tb0 + tb1 + tb2) / 3
+		var avg = math.Cbrt((1 + tb0) * (1 + tb1) * (1 + tb2))
 		if avg >= 30 {
 			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;35m★%.2f%c[0m", 0x1B, avg, 0x1B)
 		} else if avg >= 25 {
