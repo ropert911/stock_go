@@ -292,7 +292,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if mggjj*4 > float64(value.gzfx.NEW) || mggjj > 8 {
 			sockInfoShow.MGGJJ = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, mggjj, 0x1B)
 		} else {
-			sockInfoShow.MGGJJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.MGGJJ = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, mggjj, 0x1B)
 		}
 		//1积累--每股未分配利润
 		var mgwfply = stock.ToFloat(single.ZYZB[0].MGWFPLY)
@@ -301,14 +301,14 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if mgwfply*4 > float64(value.gzfx.NEW) || mgwfply > 8 {
 			sockInfoShow.MGWFPLY = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, mgwfply, 0x1B)
 		} else {
-			sockInfoShow.MGWFPLY = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.MGWFPLY = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, mgwfply, 0x1B)
 		}
 
 		//2估值-市净率
 		if value.gzfx.PB8 <= 5 {
 			sockInfoShow.SJL = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.gzfx.PB8, 0x1B)
 		} else {
-			sockInfoShow.SJL = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.SJL = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PB8, 0x1B)
 		}
 		//2估值-动态市盈率
 		if value.gzfx.PE9 <= 15 {
@@ -316,7 +316,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if value.gzfx.PE9 <= 25 {
 			sockInfoShow.PEDT = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.gzfx.PE9, 0x1B)
 		} else {
-			sockInfoShow.PEDT = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.PEDT = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PE9, 0x1B)
 		}
 		//2估值-静态市盈率
 		if value.gzfx.PE7 <= 15 {
@@ -324,7 +324,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if value.gzfx.PE7 <= 25 {
 			sockInfoShow.PEJT = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.gzfx.PE7, 0x1B)
 		} else {
-			sockInfoShow.PEJT = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.PEJT = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PE7, 0x1B)
 		}
 		//2估值-市销率
 		if value.gzfx.PS9 <= 2 {
@@ -332,7 +332,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if value.gzfx.PS9 <= 3 {
 			sockInfoShow.PS9 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.gzfx.PS9, 0x1B)
 		} else {
-			sockInfoShow.PS9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.PS9 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PS9, 0x1B)
 		}
 
 		//3成长-净益率 净资产收益率
@@ -341,21 +341,21 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if value.yjbb.WEIGHTAVG_ROE >= 10 {
 			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else {
-			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		}
 		//3成长-毛利率
 		var mll = stock.ToFloat(single.ZYZB[0].MLL)
 		if mll >= 30 {
 			sockInfoShow.MLL = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, mll, 0x1B)
 		} else {
-			sockInfoShow.MLL = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.MLL = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, mll, 0x1B)
 		}
 		//3成长-净利润率
 		var jll = stock.ToFloat(single.ZYZB[0].JLL)
 		if jll >= 20 {
 			sockInfoShow.JLL = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, jll, 0x1B)
 		} else {
-			sockInfoShow.JLL = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.JLL = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, jll, 0x1B)
 		}
 		//3成长 -- 3年平均>=20%
 		var zyzbP1 stock.SingleZyzb
@@ -380,7 +380,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if avg >= 20 {
 			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, avg, 0x1B)
 		} else {
-			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;30m %c[0m", 0x1B, 0x1B)
+			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, avg, 0x1B)
 		}
 
 		var rPB8 = value.gzfx.PB8 / value.gzfx.HY_PB8
@@ -389,7 +389,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if rPB8 < 1 {
 			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPB8, 0x1B)
 		} else {
-			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, rPB8, 0x1B)
 		}
 
 		var rPE7 = value.gzfx.PE7 / value.gzfx.HY_PE7
@@ -398,7 +398,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if rPE7 < 1 {
 			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPE7, 0x1B)
 		} else {
-			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, rPE7, 0x1B)
 		}
 
 		var rPE9 = value.gzfx.PE9 / value.gzfx.HY_PE9
@@ -407,7 +407,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if rPE9 < 1 {
 			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPE9, 0x1B)
 		} else {
-			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, rPE9, 0x1B)
 		}
 
 		var rPS9 = value.gzfx.PS9 / value.gzfx.HY_PS9
@@ -416,7 +416,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if rPS9 < 1 {
 			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPS9, 0x1B)
 		} else {
-			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, rPS9, 0x1B)
 		}
 
 		//前十大股东持股合计
@@ -427,7 +427,7 @@ func exportResult(mapStock map[string]StockInfo) {
 			} else if sdgdzb > 40 {
 				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, sdgdzb, 0x1B)
 			} else {
-				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, sdgdzb, 0x1B)
 			}
 		} else {
 			sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
@@ -441,7 +441,7 @@ func exportResult(mapStock map[string]StockInfo) {
 			} else if sdltgdzb > 30 {
 				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, sdltgdzb, 0x1B)
 			} else {
-				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, sdltgdzb, 0x1B)
 			}
 		} else {
 			sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
