@@ -526,7 +526,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		fmt.Printf("||%17s", stock.QSDGDCGHJ)
 		fmt.Printf("|%17s", stock.QSDLTGDCGHJ)
 		fmt.Printf("|%6s", stock.SBZB)
-		fmt.Printf("| %.2f", stock.JGZB)
+		fmt.Printf("|%5.2f", stock.JGZB)
 		fmt.Printf("|%15s", stock.JGTJ)
 
 		fmt.Println("|")
