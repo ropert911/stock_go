@@ -422,7 +422,9 @@ func exportResult(mapStock map[string]StockInfo) {
 		//前十大股东持股合计
 		if len(single.Gbyj.GDRS) > 0 && "--" != single.Gbyj.GDRS[0].QSDGDCGHJ {
 			var sdgdzb = stock.ToFloat(single.Gbyj.GDRS[0].QSDGDCGHJ)
-			if sdgdzb > 40 {
+			if sdgdzb > 70 {
+				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, sdgdzb, 0x1B)
+			} else if sdgdzb > 40 {
 				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, sdgdzb, 0x1B)
 			} else {
 				sockInfoShow.QSDGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
@@ -434,7 +436,9 @@ func exportResult(mapStock map[string]StockInfo) {
 		//前十大流通股东持股合计
 		if len(single.Gbyj.GDRS) > 0 && "--" != single.Gbyj.GDRS[0].QSDLTGDCGHJ {
 			var sdltgdzb = stock.ToFloat(single.Gbyj.GDRS[0].QSDLTGDCGHJ)
-			if sdltgdzb > 35 {
+			if sdltgdzb > 45 {
+				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, sdltgdzb, 0x1B)
+			} else if sdltgdzb > 30 {
 				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, sdltgdzb, 0x1B)
 			} else {
 				sockInfoShow.QSDLTGDCGHJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
@@ -474,7 +478,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		"│ 编码   ", "│ 名称       ", "│ 现价  ", "│ 行业        ",
 		"│ 3年营收平均      ", "│ 毛利率", "│ 净利率", "│ 净益率        ", "│公积金 ", "│未分配", //成长-高利润
 		"│市净率", "│ PE静 ", "│ PE动 ", "│市销率", "|市净估", "|PE静", "│PET估", "│ 市销 ", //估值
-		"|十大占", "|十流占", "| 社流占", "|合流占", "│机构推荐   ", //主力
+		"|十大占", "|十流占 ", "| 社/流", "|机/流 ", "│机构推荐   ", //主力
 	)
 	var num = len(sockInfoShows)
 	fmt.Println("符合条件的股票有=", num, "个")
