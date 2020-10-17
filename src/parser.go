@@ -239,26 +239,28 @@ type SockInfoShow struct {
 	Name          string
 	Price         string
 	HYName        string
-	MGGJJ         string //每股公积金
-	MGWFPLY       string //每股未分配
-	WEIGHTAVG_ROE string //净益率
+	YYZSRAVG      string //营业总收3年平均
 	MLL           string //毛利率(%)
 	JLL           string //净利率(%)
-	YYZSRAVG      string //营业总收3年平均
-	JGTJ          string //机构推荐数
+	WEIGHTAVG_ROE string //净益率
+	MGGJJ         string //每股公积金
+	MGWFPLY       string //每股未分配
 
-	SJL         string  //市净率
-	PEJT        string  //静态市盈率
-	PEDT        string  //动态市盈率
-	PS9         string  //市销率
-	RPB8        string  //市净率估值
-	RPE7        string  //PE(静)估值
-	RPE9        string  //PE(TTM)估值
-	RPS9        string  //市销率估值
+	//估值
+	SJL  string //市净率
+	PEJT string //静态市盈率
+	PEDT string //动态市盈率
+	PS9  string //市销率
+	RPB8 string //市净率估值
+	RPE7 string //PE(静)估值
+	RPE9 string //PE(TTM)估值
+	RPS9 string //市销率估值
+	//主力研究
 	QSDGDCGHJ   string  //前十大股东持股合计
 	QSDLTGDCGHJ string  //前十大流通股东持股合计
 	SBZB        string  //社保占流通比
 	JGZB        float64 //机构合计占流通比
+	JGTJ        string  //机构推荐数
 }
 type SockInfoShowArray []SockInfoShow
 
@@ -274,14 +276,14 @@ func exportResult(mapStock map[string]StockInfo) {
 
 	//把符合条件股票中的亮点数据显示出来
 	for key, value := range mapStock {
+		stock.DownloadSingle(key)
+		var single, _ = stock.ParseSingle(key)
+
 		var sockInfoShow SockInfoShow
 		sockInfoShow.Code = key
 		sockInfoShow.Name = value.gzfx.SName
 		sockInfoShow.Price = fmt.Sprint(value.gzfx.NEW)
 		sockInfoShow.HYName = value.gzfx.HYName
-
-		stock.DownloadSingle(key)
-		var single, _ = stock.ParseSingle(key)
 
 		//2积累--每股公积金
 		var mggjj = stock.ToFloat(single.ZYZB[0].MGGJJ)
@@ -335,7 +337,7 @@ func exportResult(mapStock map[string]StockInfo) {
 
 		//3成长-净益率 净资产收益率
 		if value.yjbb.WEIGHTAVG_ROE >= 20 {
-			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=★%c[;;35m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
+			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=%c[;;35m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else if value.yjbb.WEIGHTAVG_ROE >= 10 {
 			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("净益率=%c[;;36m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else {
@@ -374,20 +376,11 @@ func exportResult(mapStock map[string]StockInfo) {
 		var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
 		var avg = math.Cbrt((1+tb0/100)*(1+tb1/100)*(1+tb2/100))*100 - 100
 		if avg >= 30 {
-			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;35m★%.2f%c[0m", 0x1B, avg, 0x1B)
+			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;35m%.2f%c[0m", 0x1B, avg, 0x1B)
 		} else if avg >= 20 {
 			sockInfoShow.YYZSRAVG = fmt.Sprintf("增长平均=%c[;;36m%.2f%c[0m", 0x1B, avg, 0x1B)
 		} else {
-			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
-		}
-
-		//机构推荐数
-		if single.JGTJ >= 20 {
-			sockInfoShow.JGTJ = fmt.Sprintf("机构推荐=%c[;;35m★%d%c[0m", 0x1B, single.JGTJ, 0x1B)
-		} else if single.JGTJ >= 6 {
-			sockInfoShow.JGTJ = fmt.Sprintf("机构推荐=%c[;;36m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
-		} else {
-			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;30m %c[0m", 0x1B, 0x1B)
 		}
 
 		var rPB8 = value.gzfx.PB8 / value.gzfx.HY_PB8
@@ -462,6 +455,15 @@ func exportResult(mapStock map[string]StockInfo) {
 			}
 		}
 
+		//机构推荐数
+		if single.JGTJ >= 20 {
+			sockInfoShow.JGTJ = fmt.Sprintf("推荐=%c[;;35m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
+		} else if single.JGTJ >= 6 {
+			sockInfoShow.JGTJ = fmt.Sprintf("推荐=%c[;;36m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
+		} else {
+			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+		}
+
 		sockInfoShows = append(sockInfoShows, sockInfoShow)
 	}
 
@@ -469,11 +471,10 @@ func exportResult(mapStock map[string]StockInfo) {
 	t := table.Table(sockInfoShows)
 	fmt.Println(t)
 	fmt.Println(
-		"│ 编码   ", "│ 名称       ", "│ 现价  ", "│ 行业        ", "│ 公积金", "│ 未分配",
-		"│ 净益率          ", "│ 毛利率", "│ 净利率", "│ 3年营收平均           ", "│ 机构推荐           ",
-		"│市净率", "│ PE静 ", "│ PE动 ", "│市销率",
-		"|市净估", "|PE静", "│PET估", "│ 市销 ",
-		"|十大占", "|十流占", "| 社流占", "|合流占",
+		"│ 编码   ", "│ 名称       ", "│ 现价  ", "│ 行业        ",
+		"│ 3年营收平均      ", "│ 毛利率", "│ 净利率", "│ 净益率        ", "│公积金 ", "│未分配", //成长-高利润
+		"│市净率", "│ PE静 ", "│ PE动 ", "│市销率", "|市净估", "|PE静", "│PET估", "│ 市销 ", //估值
+		"|十大占", "|十流占", "| 社流占", "|合流占", "│机构推荐   ", //主力
 	)
 	var num = len(sockInfoShows)
 	fmt.Println("符合条件的股票有=", num, "个")
