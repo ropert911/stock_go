@@ -472,7 +472,7 @@ func exportResult(mapStock map[string]StockInfo) {
 	}
 	sort.Stable(sockInfoShows)
 
-	fmt.Printf("|%7s|%10s|%7s|%7s", "Code", "Name", "Price", "行业")
+	fmt.Printf("|%7s|%10s|%6s|%8s", "Code", "Name", "Price", "行业")
 	fmt.Printf("||%5s|%3s|%3s|%4s|%3s|%4s", "收入增长", "毛利润", "净利率", "净益率", "公积金", "未分配")
 	fmt.Printf("||%4s|%5s|%5s|%3s|%3s|%4s|%4s|%3s", "市净", "PE静", "PE动", "市销率", "市净比", "PE比", "PET比", "市销比")
 	fmt.Printf("||%3s|%3s|%5s|%4s|%2s", "十股占", "十流占", "社/流", "机/流", "推荐")
