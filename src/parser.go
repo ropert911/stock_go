@@ -184,6 +184,7 @@ func filterData(mapStock map[string]StockInfo) map[string]StockInfo {
 			var tb0 = stock.ToFloat(single.ZYZB[0].YYZSRTBZZ)
 			var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
 			var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
+			var avg = math.Cbrt((1+tb0/100)*(1+tb1/100)*(1+tb2/100))*100 - 100
 			if tb0 < 15 { //当年大于15%
 				delete(mapStock, key)
 				continue
@@ -192,7 +193,7 @@ func filterData(mapStock map[string]StockInfo) map[string]StockInfo {
 				delete(mapStock, key)
 				continue
 			}
-			if !((tb1 >= 10 && tb2 >= 10) || ((tb0+tb1+tb2)/3 >= 20)) {
+			if avg < 15 {
 				delete(mapStock, key)
 				continue
 			}
