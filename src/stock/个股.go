@@ -11,10 +11,10 @@ type SingleStock struct {
 }
 
 func DownloadSingle(code string) {
+	DowloadKx(code)          //下转年K线数据
 	DownloadReportData(code) //下载报表相差的
 	DowloadJgdy(code)        //下载机构调研相关数据
 	DowloadGbyj(code)        //股本研究
-	DowloadKx(code)          //下转年K线数据
 }
 
 func ParseSingle(code string) (*SingleStock, error) {
