@@ -10,9 +10,9 @@ const (
 	jgdy_singleformate   = "%s_机构调研_%s.data"                  //个股-机构调研
 	gbyj_singleformate   = "%s_股本调研_%s.data"                  //个股-机构调研
 	kx_singleformate     = "%s_年K线_%s.data"                   //个股-K线
-	reportDate           = "2020-06-30"                       //报表时间
+	reportDate           = "2020-09-30"                       //报表时间
 	token                = "894050c76af8597a853f5b408b759f5d" //访问用到的token
-	TradeData            = "2020-10-22"                       //最后一个交易日
+	TradeData            = "2020-10-30"                       //最后一个交易日
 )
 
 //http://data.eastmoney.com/gzfx/hylist.html		行业估值分析

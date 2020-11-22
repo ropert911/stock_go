@@ -22,6 +22,7 @@ func main() {
 	mapStock := parserData()
 	mapStock = filterData(mapStock)
 	exportResult(mapStock)
+	finAnalyser(mapStock)
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
@@ -536,6 +537,30 @@ func exportResult(mapStock map[string]StockInfo) {
 	fmt.Println("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
 	var num = len(sockInfoShows)
 	fmt.Println("符合条件的股票有=", num, "个")
+}
+
+func finAnalyser(mapStock map[string]StockInfo) {
+	for key, _ := range mapStock {
+		var single, _ = stock.ParseSingle(key)
+		var zcfz = single.ZCFZ[0]
+		//短期有息债
+		var dqyxz = stock.ToFloat(zcfz.STBORROW) + stock.ToFloat(zcfz.NONLLIABONEYEAR)
+
+		var xjbl = stock.ToFloat(zcfz.MONETARYFUND) / dqyxz
+		if xjbl > 0.7 {
+			fmt.Printf("---- 现金比率=货币资金/短期有息债>70%%:%s 值=%.2f%%  (货币资金=%.2f亿 短期有息债=%.2f亿)\n",
+				"\033[36;4m"+"正常"+"\033[0m",
+				100*xjbl, stock.ToFloat(zcfz.MONETARYFUND)/100000000, dqyxz/100000000)
+		} else if xjbl < 0.5 {
+			fmt.Printf("---- 现金比率=货币资金/短期有息债>70%%:%s 值=%.2f%%  (货币资金=%.2f亿 短期有息债=%.2f亿)\n",
+				"\033[31;4m"+"警告"+"\033[0m",
+				100*xjbl, stock.ToFloat(zcfz.MONETARYFUND)/100000000, dqyxz/100000000)
+		} else {
+			fmt.Printf("---- 现金比率=货币资金/短期有息债>70%%:%s 值=%.2f%%  (货币资金=%.2f亿 短期有息债=%.2f亿)\n",
+				"注意",
+				100*xjbl, stock.ToFloat(zcfz.MONETARYFUND)/100000000, dqyxz/100000000)
+		}
+	}
 }
 
 func ChineseCount(str1 string) (count int) {
