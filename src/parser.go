@@ -548,17 +548,17 @@ func finAnalyser(mapStock map[string]StockInfo) {
 
 		var xjbl = stock.ToFloat(zcfz.MONETARYFUND) / dqyxz
 		if xjbl > 0.7 {
-			fmt.Printf("---- 现金比率=货币资金/短期有息债>70%%:%s 值=%.2f%%  (货币资金=%.2f亿 短期有息债=%.2f亿)\n",
-				"\033[36;4m"+"正常"+"\033[0m",
-				100*xjbl, stock.ToFloat(zcfz.MONETARYFUND)/100000000, dqyxz/100000000)
+			//fmt.Printf("---- 现金比率=货币资金/短期有息债>70%%:%s 值=%.2f%%  (货币资金=%.2f亿 短期有息债=%.2f亿)\n",
+			//	"\033[36;4m"+"正常"+"\033[0m",
+			//	100*xjbl, stock.ToFloat(zcfz.MONETARYFUND)/100000000, dqyxz/100000000)
 		} else if xjbl < 0.5 {
-			fmt.Printf("---- 现金比率=货币资金/短期有息债>70%%:%s 值=%.2f%%  (货币资金=%.2f亿 短期有息债=%.2f亿)\n",
-				"\033[31;4m"+"警告"+"\033[0m",
-				100*xjbl, stock.ToFloat(zcfz.MONETARYFUND)/100000000, dqyxz/100000000)
+			//fmt.Printf("---- 现金比率=货币资金/短期有息债>70%%:%s 值=%.2f%%  (货币资金=%.2f亿 短期有息债=%.2f亿)\n",
+			//	"\033[31;4m"+"警告"+"\033[0m",
+			//	100*xjbl, stock.ToFloat(zcfz.MONETARYFUND)/100000000, dqyxz/100000000)
 		} else {
-			fmt.Printf("---- 现金比率=货币资金/短期有息债>70%%:%s 值=%.2f%%  (货币资金=%.2f亿 短期有息债=%.2f亿)\n",
-				"注意",
-				100*xjbl, stock.ToFloat(zcfz.MONETARYFUND)/100000000, dqyxz/100000000)
+			//fmt.Printf("---- 现金比率=货币资金/短期有息债>70%%:%s 值=%.2f%%  (货币资金=%.2f亿 短期有息债=%.2f亿)\n",
+			//	"注意",
+			//	100*xjbl, stock.ToFloat(zcfz.MONETARYFUND)/100000000, dqyxz/100000000)
 		}
 	}
 }
