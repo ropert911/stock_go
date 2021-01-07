@@ -6,6 +6,7 @@ const (
 	file_stockZcfzformat = "stock_资产负债_%s.data" //资产负债
 	file_stockLrbformat  = "stock_利润表_%s.data"  //利润表
 	file_stockXjllformat = "stock_现金流量_%s.data" //现金流量
+	file_stockYlycformat = "stock_盈利预测_%s.data" //盈利预测
 	report_singleformat  = "%s_报表_%s.data"      //个股-报表数据
 	jgdy_singleformate   = "%s_机构调研_%s.data"    //个股-机构调研
 	gbyj_singleformate   = "%s_股本调研_%s.data"    //个股-机构调研

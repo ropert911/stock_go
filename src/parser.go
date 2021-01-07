@@ -16,6 +16,7 @@ type StockInfo struct {
 	zcfz stock.StockZcfz
 	lrb  stock.StockLrb
 	xjll stock.StockXjll
+	xlyc stock.StockYlyc
 }
 
 func main() {
@@ -33,6 +34,7 @@ func parserData() map[string]StockInfo {
 	socksZcfz := stock.ReadStockZcfz()
 	stockLrb := stock.ReadStockLrb()
 	stockXjll := stock.ReadStockXjll()
+	stockYlyc := stock.ReadStockYlyc()
 	for i := 0; i < len(socksgzfx); i++ {
 		var stockInfo StockInfo
 		stockInfo.gzfx = socksgzfx[i]
@@ -57,6 +59,12 @@ func parserData() map[string]StockInfo {
 		for z := 0; z < len(stockXjll); z++ {
 			if socksgzfx[i].SECURITYCODE == stockXjll[z].SECURITY_CODE {
 				stockInfo.xjll = stockXjll[z]
+				break
+			}
+		}
+		for z := 0; z < len(stockYlyc); z++ {
+			if socksgzfx[i].SECURITYCODE == stockYlyc[z].STOCKCODE {
+				stockInfo.xlyc = stockYlyc[z]
 				break
 			}
 		}
@@ -249,14 +257,15 @@ type SockInfoShow struct {
 	MGWFPLY       string //每股未分配
 
 	//估值
-	SJL  string //市净率
-	PEJT string //静态市盈率
-	PEDT string //动态市盈率
-	PS9  string //市销率
-	RPB8 string //市净率估值
-	RPE7 string //PE(静)估值
-	RPE9 string //PE(TTM)估值
-	RPS9 string //市销率估值
+	SJL    string //市净率
+	PEJT   string //静态市盈率
+	PEDT   string //动态市盈率
+	PS9    string //市销率
+	RPB8   string //市净率估值
+	RPE7   string //PE(静)估值
+	RPE9   string //PE(TTM)估值
+	RPS9   string //市销率估值
+	MGLZGZ string //每股内在股价
 	//主力研究
 	QSDGDCGHJ   string  //前十大股东持股合计
 	QSDLTGDCGHJ string  //前十大流通股东持股合计
@@ -336,6 +345,21 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else {
 			sockInfoShow.PS9 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PS9, 0x1B)
 		}
+		//2估值-每股内在股价
+		//E(2R+8.5)*4.4/Y
+		// 	E:每股收益
+		//	R:预期收益增长率
+		//	8.5：平均市盈率，中国应该是22.5，按20来算
+		//	4.4：平均利息
+		//	Y:公司债/国债收益率（5年期）  约等于3.2%
+		//	-->每股收益*(2*预期收益增长率+22.5)*4.4/3.2
+		mglgz := float64(value.yjbb.BASIC_EPS) * (2*value.xlyc.EGR + 20.5) * 4.4 / 3.2
+		gzbl := mglgz / float64(value.gzfx.NEW)
+		if gzbl > 1.30 {
+			sockInfoShow.MGLZGZ = fmt.Sprintf("%c[;;35m%.2f%c[0m", 0x1B, mglgz, 0x1B)
+		} else {
+			sockInfoShow.MGLZGZ = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
+		}
 
 		//3成长-净益率 净资产收益率
 		if value.yjbb.WEIGHTAVG_ROE >= 20 {
@@ -393,7 +417,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if rPB8 < 1 {
 			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPB8, 0x1B)
 		} else {
-			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, rPB8, 0x1B)
+			sockInfoShow.RPB8 = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
 		}
 
 		var rPE7 = value.gzfx.PE7 / value.gzfx.HY_PE7
@@ -402,7 +426,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if rPE7 < 1 {
 			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPE7, 0x1B)
 		} else {
-			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, rPE7, 0x1B)
+			sockInfoShow.RPE7 = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
 		}
 
 		var rPE9 = value.gzfx.PE9 / value.gzfx.HY_PE9
@@ -411,7 +435,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if rPE9 < 1 {
 			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPE9, 0x1B)
 		} else {
-			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, rPE9, 0x1B)
+			sockInfoShow.RPE9 = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
 		}
 
 		var rPS9 = value.gzfx.PS9 / value.gzfx.HY_PS9
@@ -420,7 +444,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		} else if rPS9 < 1 {
 			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, rPS9, 0x1B)
 		} else {
-			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, rPS9, 0x1B)
+			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;30m   %c[0m", 0x1B, 0x1B)
 		}
 
 		//前十大股东持股合计
@@ -476,12 +500,12 @@ func exportResult(mapStock map[string]StockInfo) {
 	}
 	sort.Stable(sockInfoShows)
 
-	fmt.Println("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")
+	fmt.Println("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")
 	fmt.Printf("┃%7s┃%8s┃%5s┃%8s", "Code", "行业", "现价", "行业")
 	fmt.Printf("┃┃%4s┃%3s┃%3s┃%4s┃%4s┃%3s", "收入增长", "毛利润", "净利率", "净益率", "公积金", "未分配")
-	fmt.Printf("┃┃%4s┃%5s┃%5s┃%3s┃%3s┃%4s┃%4s┃%3s", "市净", "PE静", "PE动", "市销率", "市净比", "PE比", "PET比", "市销比")
+	fmt.Printf("┃┃%4s┃%5s┃%5s┃%3s┃%3s┃%4s┃%4s┃%3s┃%4s", "市净", "PE静", "PE动", "市销率", "市净比", "PE比", "PET比", "市销比", "内在估值")
 	fmt.Printf("┃┃%3s┃%3s┃%5s┃%4s┃%2s┃\n", "十股占", "十流占", "社/流", "机/流", "推荐")
-	fmt.Println("┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃")
+	fmt.Println("┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃")
 	for i := 0; i < len(sockInfoShows); i++ {
 		var stock = sockInfoShows[i]
 		fmt.Printf("┃")
@@ -524,6 +548,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		fmt.Printf("┃%16s", stock.RPE7)
 		fmt.Printf("┃%16s", stock.RPE9)
 		fmt.Printf("┃%16s", stock.RPS9)
+		fmt.Printf("┃%18s", stock.MGLZGZ)
 
 		//主力研究
 		fmt.Printf("┃┃%17s", stock.QSDGDCGHJ)
@@ -534,7 +559,7 @@ func exportResult(mapStock map[string]StockInfo) {
 
 		fmt.Println("┃")
 	}
-	fmt.Println("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
+	fmt.Println("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
 	var num = len(sockInfoShows)
 	fmt.Println("符合条件的股票有=", num, "个")
 }
