@@ -10,7 +10,7 @@ import (
 	"util/file"
 )
 
-type StockInfo struct {
+type StockInfo2 struct {
 	gzfx stock.StockGzfx
 	yjbb stock.StockYjbb
 	zcfz stock.StockZcfz
@@ -20,15 +20,15 @@ type StockInfo struct {
 }
 
 func main() {
-	mapStock := parserData()
-	mapStock = filterData(mapStock)
-	exportResult(mapStock)
-	finAnalyser(mapStock)
+	mapStock := parserData2()
+	mapStock = filterData2(mapStock)
+	exportResult2(mapStock)
+	finAnalyser2(mapStock)
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
-func parserData() map[string]StockInfo {
-	mapStock := make(map[string]StockInfo)
+func parserData2() map[string]StockInfo2 {
+	mapStock := make(map[string]StockInfo2)
 	socksgzfx := stock.ReadStockGzfx()
 	socksYjbb := stock.ReadStockYjbb()
 	socksZcfz := stock.ReadStockZcfz()
@@ -36,7 +36,7 @@ func parserData() map[string]StockInfo {
 	stockXjll := stock.ReadStockXjll()
 	stockYlyc := stock.ReadStockYlyc()
 	for i := 0; i < len(socksgzfx); i++ {
-		var stockInfo StockInfo
+		var stockInfo StockInfo2
 		stockInfo.gzfx = socksgzfx[i]
 		for j := 0; j < len(socksYjbb); j++ {
 			if socksgzfx[i].SECURITYCODE == socksYjbb[j].SECURITY_CODE {
@@ -76,7 +76,7 @@ func parserData() map[string]StockInfo {
 }
 
 //过滤掉不符合条件的
-func filterData(mapStock map[string]StockInfo) map[string]StockInfo {
+func filterData2(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 	for key, value := range mapStock {
 		//1有积累---非ST
 		if strings.HasPrefix(value.gzfx.SName, "*ST") || strings.HasPrefix(value.gzfx.SName, "ST") {
@@ -230,7 +230,7 @@ func filterData(mapStock map[string]StockInfo) map[string]StockInfo {
 }
 
 //生成导出信息
-func CreateExportEBK(mapStock map[string]StockInfo) {
+func CreateExportEBK2(mapStock map[string]StockInfo2) {
 	if len(mapStock) > 0 {
 		var exportName = fmt.Sprintf("%s.EBK", stock.TradeData)
 		file.WriteFile(exportName, `
@@ -244,7 +244,7 @@ func CreateExportEBK(mapStock map[string]StockInfo) {
 	}
 }
 
-type SockInfoShow struct {
+type SockInfoShow2 struct {
 	Code          string
 	Name          string
 	Price         string
@@ -273,15 +273,15 @@ type SockInfoShow struct {
 	JGZB        float64 //机构合计占流通比
 	JGTJ        string  //机构推荐数
 }
-type SockInfoShowArray []SockInfoShow
+type SockInfoShowArray []SockInfoShow2
 
 func (s SockInfoShowArray) Len() int           { return len(s) }
 func (s SockInfoShowArray) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
 func (s SockInfoShowArray) Less(i, j int) bool { return s[i].JGZB >= s[j].JGZB }
 
 //显示结果
-func exportResult(mapStock map[string]StockInfo) {
-	CreateExportEBK(mapStock)
+func exportResult2(mapStock map[string]StockInfo2) {
+	CreateExportEBK2(mapStock)
 
 	var sockInfoShows = SockInfoShowArray{}
 
@@ -290,7 +290,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		stock.DownloadSingle(key)
 		var single, _ = stock.ParseSingle(key)
 
-		var sockInfoShow SockInfoShow
+		var sockInfoShow SockInfoShow2
 		sockInfoShow.Code = key
 		sockInfoShow.Name = value.gzfx.SName
 		sockInfoShow.Price = fmt.Sprint(value.gzfx.NEW)
@@ -512,7 +512,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		fmt.Printf("%7s", stock.Code)
 
 		fmt.Printf("┃")
-		var rLen = len(stock.Name) - ChineseCount(stock.Name)
+		var rLen = len(stock.Name) - ChineseCount2(stock.Name)
 		var bLen = 10 - rLen
 		for bLen > 0 {
 			fmt.Printf(" ")
@@ -523,7 +523,7 @@ func exportResult(mapStock map[string]StockInfo) {
 		fmt.Printf("┃%7s", stock.Price)
 
 		fmt.Printf("┃")
-		rLen = len(stock.HYName) - ChineseCount(stock.HYName)
+		rLen = len(stock.HYName) - ChineseCount2(stock.HYName)
 		bLen = 10 - rLen
 		for bLen > 0 {
 			fmt.Printf(" ")
@@ -564,7 +564,7 @@ func exportResult(mapStock map[string]StockInfo) {
 	fmt.Println("符合条件的股票有=", num, "个")
 }
 
-func finAnalyser(mapStock map[string]StockInfo) {
+func finAnalyser2(mapStock map[string]StockInfo2) {
 	for key, _ := range mapStock {
 		var single, _ = stock.ParseSingle(key)
 		var zcfz = single.ZCFZ[0]
@@ -588,7 +588,7 @@ func finAnalyser(mapStock map[string]StockInfo) {
 	}
 }
 
-func ChineseCount(str1 string) (count int) {
+func ChineseCount2(str1 string) (count int) {
 	for _, char := range str1 {
 		if unicode.Is(unicode.Han, char) {
 			count++
