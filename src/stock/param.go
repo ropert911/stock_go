@@ -19,15 +19,5 @@ const (
 	//TradeData            = "2020-03-31"                       //最后一个交易日
 	//TradeData            = "2020-06-30"                       //最后一个交易日
 	//TradeData            = "2020-10-30"                       //最后一个交易日
-	TradeData = "2021-01-06" //最后一个交易日
+	TradeData = "2021-01-15" //最后一个交易日
 )
-
-//http://data.eastmoney.com/gzfx/hylist.html		行业估值分析
-//http://data.eastmoney.com/gzfx/list.html			估值分析 - 全部  股票列表
-//http://data.eastmoney.com/bbsj/202006/yjbb.html	业绩报表 - 全部
-//http://data.eastmoney.com/bbsj/202006/zcfz.html	资产负债列表 - 全部
-//http://data.eastmoney.com/bbsj/202006/lrb.html	利润表 - 全部
-//http://data.eastmoney.com/bbsj/202006/xjll.html	现金流量表
-
-//http://f10.eastmoney.com/OperationsRequired/Index?type=web&code=SZ000069#	个股数据  操盘必读-财务分析
-//http://data.eastmoney.com/stockdata/000069.html		个股数据
