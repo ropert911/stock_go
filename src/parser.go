@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"stock"
+	"strings"
 	"unicode"
 	"util/file"
 )
@@ -10,10 +11,10 @@ import (
 type StockInfo2 struct {
 	zcfz stock.StockZCFZ
 	yjbb stock.StockYJBB
-	//gzfx stock.StockGzfx
-	//lrb  stock.StockLrb
+	lrb  stock.StockLRB
 	xjll stock.StockXJLL
-	//xlyc stock.StockYlyc
+	gzfx stock.StockGZFX
+	xlyc stock.StockYLYC
 }
 
 func main() {
@@ -28,10 +29,10 @@ func parserData() map[string]StockInfo2 {
 	mapStock := make(map[string]StockInfo2)
 	socksZcfz := stock.ReadStockZCFZ()
 	socksYjbb := stock.ReadStockYJBB()
-	//socksgzfx := stock.ReadStockGzfx()
-	//stockLrb := stock.ReadStockLrb()
+	stockLrb := stock.ReadStockLRB()
 	stockXjll := stock.ReadStockXJLL()
-	//stockYlyc := stock.ReadStockYlyc()
+	socksgzfx := stock.ReadStockGZFX()
+	stockYlyc := stock.ReadStockYLYC()
 	for i := 0; i < len(socksZcfz); i++ {
 		var stockInfo StockInfo2
 		stockInfo.zcfz = socksZcfz[i]
@@ -41,30 +42,31 @@ func parserData() map[string]StockInfo2 {
 				break
 			}
 		}
-		//for z := 0; z < len(socksZcfz); z++ {
-		//	if socksZcfz[i].SECURITY_CODE == socksZcfz[z].SECURITY_CODE {
-		//		stockInfo.zcfz = socksZcfz[z]
-		//		break
-		//	}
-		//}
-		//for z := 0; z < len(stockLrb); z++ {
-		//	if socksZcfz[i].SECURITY_CODE == stockLrb[z].SECURITY_CODE {
-		//		stockInfo.lrb = stockLrb[z]
-		//		break
-		//	}
-		//}
+
+		for z := 0; z < len(stockLrb); z++ {
+			if socksZcfz[i].SECURITY_CODE == stockLrb[z].SECURITY_CODE {
+				stockInfo.lrb = stockLrb[z]
+				break
+			}
+		}
 		for z := 0; z < len(stockXjll); z++ {
 			if socksZcfz[i].SECURITY_CODE == stockXjll[z].SECURITY_CODE {
 				stockInfo.xjll = stockXjll[z]
 				break
 			}
 		}
-		//for z := 0; z < len(stockYlyc); z++ {
-		//	if socksgzfx[i].SECURITYCODE == stockYlyc[z].STOCKCODE {
-		//		stockInfo.xlyc = stockYlyc[z]
-		//		break
-		//	}
-		//}
+		for z := 0; z < len(socksgzfx); z++ {
+			if socksZcfz[i].SECURITY_CODE == socksgzfx[z].SECURITYCODE {
+				stockInfo.gzfx = socksgzfx[z]
+				break
+			}
+		}
+		for z := 0; z < len(stockYlyc); z++ {
+			if socksgzfx[i].SECURITYCODE == stockYlyc[z].STOCKCODE {
+				stockInfo.xlyc = stockYlyc[z]
+				break
+			}
+		}
 
 		mapStock[socksZcfz[i].SECURITY_CODE] = stockInfo
 	}
@@ -75,7 +77,6 @@ func parserData() map[string]StockInfo2 {
 //过滤掉不符合条件的
 func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 	for key, value := range mapStock {
-		fmt.Printf("%s %s\n", key, value.zcfz.SECURITY_CODE)
 		//毛利率>=10%
 		{
 			var tmp = value.yjbb.XSMLL
@@ -114,23 +115,54 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 				continue
 			}
 		}
+		//净利润>0.2亿
+		{
+			if value.yjbb.PARENT_NETPROFIT < 20000000 {
+				delete(mapStock, key)
+				continue
+			}
+		}
+		//扣非净利润>0.2亿
+		{
+			if value.lrb.DEDUCT_PARENT_NETPROFIT < 20000000 {
+				delete(mapStock, key)
+				continue
+			}
+		}
+		//收入同比>=15%
+		{
+			if value.yjbb.YSTZ < 15 {
+				delete(mapStock, key)
+				continue
+			}
+		}
+		//非ST
+		{
+			if strings.HasPrefix(value.zcfz.SECURITY_NAME_ABBR, "*ST") || strings.HasPrefix(value.zcfz.SECURITY_NAME_ABBR, "ST") {
+				delete(mapStock, key)
+				continue
+			}
+		}
+		//>5元 && 不为空
+		{
+			if value.gzfx.NEW < 5 {
+				delete(mapStock, key)
+				continue
+			}
+		}
+		//资产负债率<70%
+		{
+			if value.zcfz.DEBT_ASSET_RATIO >= 70 {
+				delete(mapStock, key)
+				continue
+			}
+		}
 		//未分配利润 >1亿
 		//{
 		//	if stock.ToFloat(single.ZCFZ[0].RETAINEDEARNING) < 100000000 {
 		//		delete(mapStock, key)
 		//		continue
 		//	}
-		//}
-
-		////1有积累---非ST
-		//if strings.HasPrefix(value.gzfx.SName, "*ST") || strings.HasPrefix(value.gzfx.SName, "ST") {
-		//	delete(mapStock, key)
-		//	continue
-		//}
-		////1有积累--- 现价不为空
-		//if value.gzfx.NEW < 5 {
-		//	delete(mapStock, key)
-		//	continue
 		//}
 
 		////2估值 --- 市盈率(动静)>0不为空
@@ -149,27 +181,7 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 		//	delete(mapStock, key)
 		//	continue
 		//}
-		////3成长 --净利润>0.2亿
-		//if value.yjbb.PARENT_NETPROFIT < 20000000 {
-		//	delete(mapStock, key)
-		//	continue
-		//}
-		////3成长 --扣非净利润>0.2亿
-		//if value.lrb.DEDUCT_PARENT_NETPROFIT < 20000000 {
-		//	delete(mapStock, key)
-		//	continue
-		//}
-		////3成长 -- 收入同比>=15%
-		//if value.yjbb.YSTZ < 15 {
-		//	delete(mapStock, key)
-		//	continue
-		//}
-		//
-		////4财报 -- 资产负债率<70%
-		//if value.zcfz.DEBT_ASSET_RATIO >= 70 {
-		//	delete(mapStock, key)
-		//	continue
-		//}
+
 		////4财报 -- 资产负债率>65%的，净资产收益率>10%
 		//if value.zcfz.DEBT_ASSET_RATIO >= 65 && value.yjbb.WEIGHTAVG_ROE < 10 {
 		//	delete(mapStock, key)

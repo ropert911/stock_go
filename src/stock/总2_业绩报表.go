@@ -95,22 +95,22 @@ func ReadStockYJBB() []StockYJBB {
 		return nil
 	}
 
-	for i := 0; i < len(stockArray2); i++ {
-		fmt.Printf("%6s %6s 收入=%f 同比=%f 环比=%f 净利润=%f 同比=%f 环比=%f 销售毛利润=%f%% 每股收益（元）=%f 每股净资产=%f元 净资产收益率%%=%f\n",
-			stockArray2[i].SECURITY_CODE,
-			stockArray2[i].SECURITY_NAME_ABBR,
-			stockArray2[i].TOTAL_OPERATE_INCOME,
-			stockArray2[i].YSTZ,
-			stockArray2[i].YSHZ,
-			stockArray2[i].PARENT_NETPROFIT,
-			stockArray2[i].SJLTZ,
-			stockArray2[i].SJLHZ,
-			stockArray2[i].XSMLL,
-			stockArray2[i].BASIC_EPS,
-			stockArray2[i].BPS,
-			stockArray2[i].WEIGHTAVG_ROE,
-		)
-	}
+	//for i := 0; i < len(stockArray2); i++ {
+	//	fmt.Printf("%6s %6s 收入=%f 同比=%f 环比=%f 净利润=%f 同比=%f 环比=%f 销售毛利润=%f%% 每股收益（元）=%f 每股净资产=%f元 净资产收益率%%=%f\n",
+	//		stockArray2[i].SECURITY_CODE,
+	//		stockArray2[i].SECURITY_NAME_ABBR,
+	//		stockArray2[i].TOTAL_OPERATE_INCOME,
+	//		stockArray2[i].YSTZ,
+	//		stockArray2[i].YSHZ,
+	//		stockArray2[i].PARENT_NETPROFIT,
+	//		stockArray2[i].SJLTZ,
+	//		stockArray2[i].SJLHZ,
+	//		stockArray2[i].XSMLL,
+	//		stockArray2[i].BASIC_EPS,
+	//		stockArray2[i].BPS,
+	//		stockArray2[i].WEIGHTAVG_ROE,
+	//	)
+	//}
 
 	return stockArray2
 }
