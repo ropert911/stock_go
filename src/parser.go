@@ -77,9 +77,9 @@ func parserData() map[string]StockInfo2 {
 //过滤掉不符合条件的
 func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 	for key, value := range mapStock {
-		//净资产收益率>10%
+		//净资产收益率>8%
 		{
-			if value.yjbb.WEIGHTAVG_ROE < 10 {
+			if value.yjbb.WEIGHTAVG_ROE < 8 {
 				delete(mapStock, key)
 				continue
 			}
