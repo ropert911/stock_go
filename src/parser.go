@@ -157,6 +157,20 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 				continue
 			}
 		}
+		//100>市盈率(动静)>0不为空
+		{
+			if value.gzfx.PE9 >= 100 || value.gzfx.PE9 <= 0 || value.gzfx.PE7 >= 100 || value.gzfx.PE7 <= 0 {
+				delete(mapStock, key)
+				continue
+			}
+		}
+		//2估值 --- 市销率<12
+		{
+			if value.gzfx.PS9 >= 12 {
+				delete(mapStock, key)
+				continue
+			}
+		}
 		//未分配利润 >1亿
 		//{
 		//	if stock.ToFloat(single.ZCFZ[0].RETAINEDEARNING) < 100000000 {
@@ -165,17 +179,6 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 		//	}
 		//}
 
-		////2估值 --- 市盈率(动静)>0不为空
-		//if value.gzfx.PE9 <= 0 || value.gzfx.PE7 <= 0 {
-		//	delete(mapStock, key)
-		//	continue
-		//}
-		////2估值 --- 市销率<10
-		//if value.gzfx.PS9 >= 10 {
-		//	delete(mapStock, key)
-		//	continue
-		//}
-		//
 		////3成长 -- 营业收入>0不为空
 		//if value.yjbb.TOTAL_OPERATE_INCOME <= 0 {
 		//	delete(mapStock, key)
