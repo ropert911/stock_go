@@ -77,6 +77,13 @@ func parserData() map[string]StockInfo2 {
 //过滤掉不符合条件的
 func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 	for key, value := range mapStock {
+		//净资产收益率>10%
+		{
+			if value.yjbb.WEIGHTAVG_ROE < 10 {
+				delete(mapStock, key)
+				continue
+			}
+		}
 		//毛利率>=10%
 		{
 			var tmp = value.yjbb.XSMLL
@@ -181,12 +188,6 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 
 		////3成长 -- 营业收入>0不为空
 		//if value.yjbb.TOTAL_OPERATE_INCOME <= 0 {
-		//	delete(mapStock, key)
-		//	continue
-		//}
-
-		////4财报 -- 资产负债率>65%的，净资产收益率>10%
-		//if value.zcfz.DEBT_ASSET_RATIO >= 65 && value.yjbb.WEIGHTAVG_ROE < 10 {
 		//	delete(mapStock, key)
 		//	continue
 		//}
