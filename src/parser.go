@@ -107,14 +107,14 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 		///////////////////收入多
 		//净利润>0.2亿
 		{
-			if value.yjbb.PARENT_NETPROFIT < 20000000 {
+			if value.yjbb.PARENT_NETPROFIT < (0.2 * 10000 * 10000) {
 				delete(mapStock, key)
 				continue
 			}
 		}
 		//扣非净利润>0.2亿
 		{
-			if value.lrb.DEDUCT_PARENT_NETPROFIT < 20000000 {
+			if value.lrb.DEDUCT_PARENT_NETPROFIT < (0.2 * 10000 * 10000) {
 				delete(mapStock, key)
 				continue
 			}
@@ -131,7 +131,7 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 				yincome = yincome * 4 / 3
 			}
 
-			if yincome < 1000000000 {
+			if yincome < (10 * 10000 * 10000) {
 				delete(mapStock, key)
 				continue
 			}
@@ -244,7 +244,7 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 
 		//未分配利润 >1亿
 		{
-			if stock.ToFloat(single.ZCFZ[0].RETAINEDEARNING) < 100000000 {
+			if stock.ToFloat(single.ZCFZ[0].RETAINEDEARNING) < (10000 * 10000) {
 				delete(mapStock, key)
 				continue
 			}
