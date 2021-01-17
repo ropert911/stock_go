@@ -11,7 +11,6 @@ const (
 	thbj_singleformate   = "%s_同行比较_%s.data"    //个股-同行比较
 	jgdy_singleformate   = "%s_机构调研_%s.data"    //个股-机构调研
 	gbyj_singleformate   = "%s_股本调研_%s.data"    //个股-机构调研
-	kx_singleformate     = "%s_年K线_%s.data"     //个股-K线
 	//reportDate           = "2020-03-31"                       //报表时间
 	//reportDate           = "2020-06-30"                       //报表时间
 	reportDate = "2020-09-30" //报表时间
