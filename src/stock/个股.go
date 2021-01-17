@@ -3,7 +3,7 @@ package stock
 type SingleStock struct {
 	ZYZB []SingleZyzb //主要指标
 	ZCFZ []SingleZcfz //资产负债
-
+	THBJ *SingleTHBJ  //同行比较
 	//	JGTJ int          //机构推荐数
 	//	LAST float32      //去年涨幅
 	//	THIS float32      //今年涨幅
@@ -17,8 +17,9 @@ type SingleStock struct {
 //	DowloadGbyj(code)        //股本研究
 //}
 
-func ParseSingle(code string) (*SingleStock, error) {
+func ParseSingle(code string, icode string) (*SingleStock, error) {
 	sigleStock, err := ParseReportData(code) //解析报表数据 -- 报表
+	sigleStock.THBJ = ParseTHBJ(code, icode)
 	//	sigleStock.JGTJ = ParseSingleJkdy(code)                          //解析机构推荐数据 -- 日转月用
 	//	sigleStock.LAST, sigleStock.THIS, sigleStock.TWO = ParseKy(code) //K线数据 -- 日转月用
 	//	sigleStock.Gbyj = ParseGbyj(code)

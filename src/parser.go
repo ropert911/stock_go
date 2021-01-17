@@ -211,10 +211,29 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 		}
 
 		//========================================个股=================================
-		var single, err = stock.ParseSingle(key)
+		var single, err = stock.ParseSingle(key, value.gzfx.ORIGINALCODE)
 		if nil != err {
 			fmt.Println("Error parse single stock data ", err)
 			continue
+		}
+
+		//三年平均净资产收益率>行业平均和行业中值
+		{
+			if stock.ToFloat(single.THBJ.DBFXBJ.DATA[0].ROEPJ) < stock.ToFloat(single.THBJ.DBFXBJ.DATA[1].ROEPJ) {
+				delete(mapStock, key)
+				continue
+			}
+			if stock.ToFloat(single.THBJ.DBFXBJ.DATA[0].ROEPJ) < stock.ToFloat(single.THBJ.DBFXBJ.DATA[2].ROEPJ) {
+				delete(mapStock, key)
+				continue
+			}
+		}
+		//前一年的净资产收益>=行业中值*1.2
+		{
+			if stock.ToFloat(single.THBJ.DBFXBJ.DATA[0].ROE2) < (stock.ToFloat(single.THBJ.DBFXBJ.DATA[1].ROE2) * 1.2) {
+				delete(mapStock, key)
+				continue
+			}
 		}
 
 		//未分配利润 >1亿
