@@ -64,7 +64,7 @@ func parserData() map[string]StockInfo2 {
 			}
 		}
 		for z := 0; z < len(stockYlyc); z++ {
-			if socksgzfx[i].SECURITYCODE == stockYlyc[z].STOCKCODE {
+			if socksZcfz[i].SECURITY_CODE == stockYlyc[z].STOCKCODE {
 				stockInfo.xlyc = stockYlyc[z]
 				break
 			}
