@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"stock"
 	"strings"
 	"unicode"
@@ -77,29 +78,65 @@ func parserData() map[string]StockInfo2 {
 //过滤掉不符合条件的
 func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 	for key, value := range mapStock {
-		//净资产收益率>8%
+		//////////////////////资金效率高
+		//净资产收益率>10%
 		{
-			if value.yjbb.WEIGHTAVG_ROE < 8 {
+			if value.yjbb.WEIGHTAVG_ROE < 10 {
 				delete(mapStock, key)
 				continue
 			}
 		}
 		//毛利率>=10%
-		{
-			var tmp = value.yjbb.XSMLL
-			if tmp < 10 {
-				delete(mapStock, key)
-				continue
-			}
-		}
+		//{
+		//	var tmp = value.yjbb.XSMLL
+		//	if tmp < 10 {
+		//		delete(mapStock, key)
+		//		continue
+		//	}
+		//}
 		//净利润率>=5%
+		//{
+		//	var tmp = 100 * value.yjbb.PARENT_NETPROFIT / value.yjbb.TOTAL_OPERATE_INCOME
+		//	if tmp < 5 {
+		//		delete(mapStock, key)
+		//		continue
+		//	}
+		//}
+
+		///////////////////收入多
+		//净利润>0.2亿
 		{
-			var tmp = 100 * value.yjbb.PARENT_NETPROFIT / value.yjbb.TOTAL_OPERATE_INCOME
-			if tmp < 5 {
+			if value.yjbb.PARENT_NETPROFIT < 20000000 {
 				delete(mapStock, key)
 				continue
 			}
 		}
+		//扣非净利润>0.2亿
+		{
+			if value.lrb.DEDUCT_PARENT_NETPROFIT < 20000000 {
+				delete(mapStock, key)
+				continue
+			}
+		}
+		//年收入大于10亿
+		{
+			var yincome = value.yjbb.TOTAL_OPERATE_INCOME
+			var _, date = stock.GetDate(value.zcfz.REPORT_DATE)
+			if date == 3 {
+				yincome = yincome * 4
+			} else if date == 6 {
+				yincome = yincome * 2
+			} else if date == 9 {
+				yincome = yincome * 4 / 3
+			}
+
+			if yincome < 1000000000 {
+				delete(mapStock, key)
+				continue
+			}
+		}
+
+		///////////////////有余钱
 		//(货币资金/营业收入)>20%
 		{
 			var tmp = 100 * value.zcfz.MONETARYFUNDS / value.yjbb.TOTAL_OPERATE_INCOME
@@ -122,20 +159,33 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 				continue
 			}
 		}
-		//净利润>0.2亿
+
+		/////////////估值
+		//100>市盈率(动静)>0不为空
 		{
-			if value.yjbb.PARENT_NETPROFIT < 20000000 {
+			if value.gzfx.PE9 >= 100 || value.gzfx.PE9 <= 0 || value.gzfx.PE7 >= 100 || value.gzfx.PE7 <= 0 {
 				delete(mapStock, key)
 				continue
 			}
 		}
-		//扣非净利润>0.2亿
+		//市销率<10
 		{
-			if value.lrb.DEDUCT_PARENT_NETPROFIT < 20000000 {
+			if value.gzfx.PS9 >= 10 {
 				delete(mapStock, key)
 				continue
 			}
 		}
+
+		/////////////////////风险
+		//资产负债率<70%
+		{
+			if value.zcfz.DEBT_ASSET_RATIO >= 70 {
+				delete(mapStock, key)
+				continue
+			}
+		}
+
+		///////////成长
 		//收入同比>=15%
 		{
 			if value.yjbb.YSTZ < 15 {
@@ -143,6 +193,8 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 				continue
 			}
 		}
+
+		///////////////其它
 		//非ST
 		{
 			if strings.HasPrefix(value.zcfz.SECURITY_NAME_ABBR, "*ST") || strings.HasPrefix(value.zcfz.SECURITY_NAME_ABBR, "ST") {
@@ -157,34 +209,72 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 				continue
 			}
 		}
-		//资产负债率<70%
-		{
-			if value.zcfz.DEBT_ASSET_RATIO >= 70 {
-				delete(mapStock, key)
-				continue
-			}
+
+		//========================================个股=================================
+		var single, err = stock.ParseSingle(key)
+		if nil != err {
+			fmt.Println("Error parse single stock data ", err)
+			continue
 		}
-		//100>市盈率(动静)>0不为空
-		{
-			if value.gzfx.PE9 >= 100 || value.gzfx.PE9 <= 0 || value.gzfx.PE7 >= 100 || value.gzfx.PE7 <= 0 {
-				delete(mapStock, key)
-				continue
-			}
-		}
-		//2估值 --- 市销率<12
-		{
-			if value.gzfx.PS9 >= 12 {
-				delete(mapStock, key)
-				continue
-			}
-		}
+
 		//未分配利润 >1亿
-		//{
-		//	if stock.ToFloat(single.ZCFZ[0].RETAINEDEARNING) < 100000000 {
-		//		delete(mapStock, key)
-		//		continue
-		//	}
-		//}
+		{
+			if stock.ToFloat(single.ZCFZ[0].RETAINEDEARNING) < 100000000 {
+				delete(mapStock, key)
+				continue
+			}
+		}
+		//每股公积金>0.5元
+		if stock.ToFloat(single.ZYZB[0].MGGJJ) < 0.5 {
+			delete(mapStock, key)
+			continue
+		}
+
+		//每股未分配利润>0.5元
+		if stock.ToFloat(single.ZYZB[0].MGWFPLY) < 0.5 {
+			delete(mapStock, key)
+			continue
+		}
+
+		//成长要求
+		{
+			var zyzbP0 = single.ZYZB[0] //当前财务指标
+			var zyzbP1 stock.SingleZyzb //上一年的主要指标
+			var zyzbP2 stock.SingleZyzb //前2年的财务指标
+			//找到前2年的财务指标
+			var curYear, _ = stock.GetDate(zyzbP0.DATE)
+			for i := 0; i < len(single.ZYZB); i++ {
+				var year, date = stock.GetDate(single.ZYZB[i].DATE)
+				if date == 12 {
+					if 1 == curYear-year {
+						zyzbP1 = single.ZYZB[i]
+					} else if 2 == curYear-year {
+						zyzbP2 = single.ZYZB[i]
+					}
+				}
+			}
+
+			//近3年不能有负增长
+			{
+				var tb0 = stock.ToFloat(zyzbP0.YYZSRTBZZ)
+				var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
+				var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
+				if tb0 < 0 || tb1 < 0 || tb2 < 0 {
+					delete(mapStock, key)
+					continue
+				}
+			}
+			//近2年平均>15%
+			{
+				var tb0 = stock.ToFloat(zyzbP0.YYZSRTBZZ)
+				var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
+				var last2avg = math.Cbrt((1+tb0/100)*(1+tb1/100))*100 - 100
+				if last2avg < 15 {
+					delete(mapStock, key)
+					continue
+				}
+			}
+		}
 
 		////3成长 -- 营业收入>0不为空
 		//if value.yjbb.TOTAL_OPERATE_INCOME <= 0 {
@@ -193,37 +283,7 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 		//}
 
 		//
-		//stock.DownloadSingle(key)
-		//var single, err = stock.ParseSingle(key)
-		//if nil != err {
-		//	fmt.Println("Error parse single stock data ", err)
-		//	continue
-		//}
-		////1有积累 -- 每股公积金>0.5元
-		//if stock.ToFloat(single.ZYZB[0].MGGJJ) < 0.5 {
-		//	delete(mapStock, key)
-		//	continue
-		//}
 
-		////1有积累 -- 每股未分配利润>0.5元
-		//if stock.ToFloat(single.ZYZB[0].MGWFPLY) < 0.5 {
-		//	delete(mapStock, key)
-		//	continue
-		//}
-		//
-		//var zyzbP1 stock.SingleZyzb
-		//var zyzbP2 stock.SingleZyzb
-		//var curYear, _ = stock.GetDate(single.ZYZB[0].DATE)
-		//for i := 0; i < len(single.ZYZB); i++ {
-		//	var year, date = stock.GetDate(single.ZYZB[i].DATE)
-		//	if date == 12 {
-		//		if 1 == curYear-year {
-		//			zyzbP1 = single.ZYZB[i]
-		//		} else if 2 == curYear-year {
-		//			zyzbP2 = single.ZYZB[i]
-		//		}
-		//	}
-		//}
 		//
 		////3成长 -- 近3年利润不为负
 		//{
@@ -235,26 +295,6 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 		//		continue
 		//	}
 		//}
-		////3成长 -- 前2年>10% 或近 3年平均20%
-		//{
-		//	var tb0 = stock.ToFloat(single.ZYZB[0].YYZSRTBZZ)
-		//	var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
-		//	var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
-		//	var avg = math.Cbrt((1+tb0/100)*(1+tb1/100)*(1+tb2/100))*100 - 100
-		//	if tb0 < 15 { //当年大于15%
-		//		delete(mapStock, key)
-		//		continue
-		//	}
-		//	if tb1 < 0 || tb2 < 0 { //近3年不能有负增长
-		//		delete(mapStock, key)
-		//		continue
-		//	}
-		//	if avg < 15 {
-		//		delete(mapStock, key)
-		//		continue
-		//	}
-		//}
-		//
 
 		////5其它 -- 近2年<150 每年小于60%
 		//if single.THIS >= 60 || single.TWO >= 150 {

@@ -13,6 +13,7 @@ import (
 type StockZCFZ struct {
 	SECURITY_CODE      string  //股票代码
 	SECURITY_NAME_ABBR string  //简称
+	REPORT_DATE        string  //报表日期
 	TOTAL_ASSETS       float32 //总资产
 	MONETARYFUNDS      float32 //货币资金（元）
 	ACCOUNTS_RECE      float32 //应收账款（元）
@@ -22,6 +23,7 @@ type StockZCFZ struct {
 	TOTAL_EQUITY       float32 //股东权益合计(元)
 	TOTAL_LIAB_RATIO   float32 //总负债同比(%)
 	DEBT_ASSET_RATIO   float32 //资产负债率(%)
+
 }
 
 //资产负债
