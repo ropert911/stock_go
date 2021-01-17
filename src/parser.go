@@ -146,13 +146,6 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 				continue
 			}
 		}
-		//总现金流>0.2亿
-		{
-			if value.xjll.CCE_ADD < (0.2 * 10000 * 10000) {
-				delete(mapStock, key)
-				continue
-			}
-		}
 		//每股净资产>1 && 不为空
 		{
 			if value.yjbb.BPS < 1 {
