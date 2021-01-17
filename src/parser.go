@@ -353,6 +353,12 @@ type SockInfoShow struct {
 	YYZSRZZ  string //营业总收增长
 	YYZSRAVG string //营业总收3年平均
 
+	//行业排名
+	HPMZSZ string //总市值排名
+	HPMJLR string //净利润排名
+	HPMGZ  string //估值排名
+	HPMCZX string //成长性排名
+
 	//主力研究
 	SBZB string //社保占流通比
 	JGZB string //机构合计占流通比
@@ -502,6 +508,16 @@ func exportResult(mapStock map[string]StockInfo2) {
 			}
 		}
 
+		////////////////行业排名
+		sockInfoShow.HPMZSZ = single.THBJ.GSGMZSZ[0].PM //总市值排名
+		sockInfoShow.HPMZSZ = strings.ReplaceAll(sockInfoShow.HPMZSZ, "U003E", ">")
+		sockInfoShow.HPMJLR = single.THBJ.GSGMJLR[0].PM //净利润
+		sockInfoShow.HPMJLR = strings.ReplaceAll(sockInfoShow.HPMJLR, "U003E", ">")
+		sockInfoShow.HPMGZ = single.THBJ.GZBJ.DATA[0].PM //估值
+		sockInfoShow.HPMGZ = strings.ReplaceAll(sockInfoShow.HPMGZ, "U003E", ">")
+		sockInfoShow.HPMCZX = single.THBJ.CZXBJ.DATA[0].PM //成长性
+		sockInfoShow.HPMCZX = strings.ReplaceAll(sockInfoShow.HPMCZX, "U003E", ">")
+
 		////////////////主力研究
 		//社保/流通股 >= 3%   机构占流通股比例>40%
 		sockInfoShow.SBZB = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
@@ -560,15 +576,16 @@ func exportResult(mapStock map[string]StockInfo2) {
 	}
 	sort.Stable(sockInfoShows)
 
-	fmt.Println("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")
+	fmt.Println("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")
 	fmt.Printf("┃%7s┃%8s┃%5s┃%8s", "Code", "名称", "现价", "行业")
 	fmt.Printf("┃┃%4s┃%3s┃%3s", "公积金", "未分配", "净益率")
 	fmt.Printf("┃┃%5s┃%4s┃%5s┃%5s┃%5s┃%6s", "市净率估", "PE估", "PET估", "市销率估", "内在股价估", "PEG")
 	fmt.Printf("┃┃%5s┃%4s┃%6s┃%5s", "市净率", "PE静", "PE TTM", "市销率")
 	fmt.Printf("┃┃%4s┃%3s", "收入增长", "三年avg增长")
+	fmt.Printf("┃┃%4s┃%3s┃%3s┃%3s", "总市值排名", "净利润", "估值", "成长性")
 	fmt.Printf("┃┃%4s┃%3s┃%3s", "社/流", "机/流", "推荐数")
 	fmt.Printf("\n")
-	fmt.Println("┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃")
+	fmt.Println("┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃")
 	for i := 0; i < len(sockInfoShows); i++ {
 		var stock = sockInfoShows[i]
 		fmt.Printf("┃")
@@ -617,6 +634,9 @@ func exportResult(mapStock map[string]StockInfo2) {
 		fmt.Printf("┃┃%19s", stock.YYZSRZZ)
 		fmt.Printf("┃%21s", stock.YYZSRAVG)
 
+		//行业比较
+		fmt.Printf("┃┃%10s|%5s|%5s|%5s", stock.HPMZSZ, stock.HPMJLR, stock.HPMGZ, stock.HPMCZX)
+
 		//主力研究
 		fmt.Printf("┃┃%17s", stock.SBZB)
 		fmt.Printf("┃%16s", stock.JGZB)
@@ -624,7 +644,7 @@ func exportResult(mapStock map[string]StockInfo2) {
 
 		fmt.Println("┃")
 	}
-	fmt.Println("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
+	fmt.Println("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
 	fmt.Println("符合条件的股票有=", len(mapStock), "个")
 }
 
