@@ -530,7 +530,7 @@ func exportResult(mapStock map[string]StockInfo2) {
 				}
 			} else if strings.Contains(single.Gbyj.ZLCC[i].JGLX, "合计") {
 				var hjbl = stock.ToFloat(strings.ReplaceAll(single.Gbyj.ZLCC[i].ZLTGBL, "%", ""))
-				if hjbl >= 40 {
+				if hjbl >= 50 {
 					sockInfoShow.JGZB = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, hjbl, 0x1B)
 				}
 			}
