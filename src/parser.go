@@ -23,6 +23,8 @@ func main() {
 	mapStock := parserData()
 	mapStock = filterData(mapStock)
 	exportResult(mapStock)
+	mapStock = filterData2(mapStock)
+	exportResult(mapStock)
 	//finAnalyser2(mapStock)
 }
 
@@ -302,6 +304,21 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 					delete(mapStock, key)
 					continue
 				}
+			}
+		}
+	}
+
+	return mapStock
+}
+
+//过滤掉不符合条件的
+func filterData2(mapStock map[string]StockInfo2) map[string]StockInfo2 {
+	for key, value := range mapStock {
+		//市盈率(动静)>40 && 静态市盈率>40
+		{
+			if value.gzfx.PE9 >= 40 && value.gzfx.PE7 >= 40 {
+				delete(mapStock, key)
+				continue
 			}
 		}
 	}
