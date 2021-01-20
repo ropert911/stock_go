@@ -22,9 +22,12 @@ type StockInfo2 struct {
 func main() {
 	mapStock := parserData()
 	mapStock = filterData(mapStock)
-	exportResult(mapStock)
+	//exportResult(mapStock)
+	CreateExportEBK(mapStock)
+
 	mapStock = filterData2(mapStock)
 	exportResult(mapStock)
+	CreateExportEBK2(mapStock)
 	//finAnalyser2(mapStock)
 }
 
@@ -327,7 +330,7 @@ func filterData2(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 }
 
 //生成导出信息
-func CreateExportEBK2(mapStock map[string]StockInfo2) {
+func CreateExportEBK(mapStock map[string]StockInfo2) {
 	if len(mapStock) > 0 {
 		var exportName = fmt.Sprintf("%s.EBK", stock.TradeData)
 		file.WriteFile(exportName, `
@@ -341,42 +344,55 @@ func CreateExportEBK2(mapStock map[string]StockInfo2) {
 	}
 }
 
+//生成导出信息
+func CreateExportEBK2(mapStock map[string]StockInfo2) {
+	if len(mapStock) > 0 {
+		var exportName = fmt.Sprintf("%s_二.EBK", stock.TradeData)
+		file.WriteFile(exportName, `
+`)
+
+		for key, _ := range mapStock {
+			var code = stock.GetExportCodeByCode(key)
+			file.AppendFile(exportName, fmt.Sprintf(`%s
+`, code))
+		}
+	}
+}
+
 type SockInfoShow struct {
 	//基本信息
-	Code   string //编码
-	Name   string //名称
-	Price  string //股价
-	HYName string //行业
+	Code    string //编码
+	Name    string //名称
+	Price   string //股价
+	HYName  string //行业
+	MGGJJ   string //每股公积金
+	MGWFPLY string //每股未分配
 
-	//重点关注
-	MGGJJ         string //每股公积金
-	MGWFPLY       string //每股未分配
-	WEIGHTAVG_ROE string //净益率
+	//龙头
+	HPMZSZ        string //总市值排名
+	HPMJLR        string //净利润排名
+	XSMLL         string //毛利率
+	WEIGHTAVG_ROE string //ROE
+
+	//业绩增长
+	YYZSRAVG string //营业总收3年平均
+	YYZSRZZ  string //营业总收增长
+	HPMCZX   string //成长性排名
 
 	//估值
+	SJL    string //市净率
+	PEJT   string //静态市盈率
+	PEDT   string //动态市盈率
+	PS9    string //市销率
 	RPB8   string //市净率估值
 	RPE7   string //PE(静)估值
 	RPE9   string //PE(TTM)估值
 	RPS9   string //市销率估值
+	PEG    string //PEG 估值
 	MGLZGZ string //每股内在股价估值
-	PEG    string //PEG
-	//估值-值
-	SJL  string //市净率
-	PEJT string //静态市盈率
-	PEDT string //动态市盈率
-	PS9  string //市销率
-
-	//成长
-	YYZSRZZ  string //营业总收增长
-	YYZSRAVG string //营业总收3年平均
-
-	//行业排名
-	HPMZSZ string //总市值排名
-	HPMJLR string //净利润排名
 	HPMGZ  string //估值排名
-	HPMCZX string //成长性排名
 
-	//主力研究
+	//主力
 	SBZB string //社保占流通比
 	JGZB string //机构合计占流通比
 	JGTJ string //机构推荐数
@@ -389,8 +405,6 @@ func (s SockInfoShowArray) Less(i, j int) bool { return s[i].Price >= s[j].Price
 
 //显示结果
 func exportResult(mapStock map[string]StockInfo2) {
-	CreateExportEBK2(mapStock)
-
 	var sockInfoShows = SockInfoShowArray{}
 
 	//把符合条件股票中的亮点数据显示出来
@@ -398,12 +412,12 @@ func exportResult(mapStock map[string]StockInfo2) {
 		var single, _ = stock.ParseSingle(key, value.gzfx.ORIGINALCODE)
 
 		var sockInfoShow SockInfoShow
+
+		////基本信息
 		sockInfoShow.Code = key
 		sockInfoShow.Name = value.zcfz.SECURITY_NAME_ABBR
 		sockInfoShow.Price = fmt.Sprint(value.gzfx.NEW)
 		sockInfoShow.HYName = value.gzfx.HYName
-
-		//重点关注
 		//公积金*4>现价
 		var mggjj = stock.ToFloat(single.ZYZB[0].MGGJJ)
 		if mggjj*4 > float64(value.gzfx.NEW) {
@@ -418,14 +432,66 @@ func exportResult(mapStock map[string]StockInfo2) {
 		} else {
 			sockInfoShow.MGWFPLY = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
 		}
+
+		//龙头
+		sockInfoShow.HPMZSZ = single.THBJ.GSGMZSZ[0].PM //总市值排名
+		sockInfoShow.HPMZSZ = strings.ReplaceAll(sockInfoShow.HPMZSZ, "U003E", ">")
+		sockInfoShow.HPMJLR = single.THBJ.GSGMJLR[0].PM //净利润排名
+		sockInfoShow.HPMJLR = strings.ReplaceAll(sockInfoShow.HPMZSZ, "U003E", ">")
+		sockInfoShow.XSMLL = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.yjbb.XSMLL, 0x1B) //毛利率
 		//ROE > 20
 		if value.yjbb.WEIGHTAVG_ROE >= 15 {
 			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, value.yjbb.WEIGHTAVG_ROE, 0x1B)
 		} else {
-			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
+			sockInfoShow.WEIGHTAVG_ROE = fmt.Sprintf("%c[;;30m     %c[0m", 0x1B, 0x1B)
 		}
 
-		////////////////////////////////估值
+		//业绩增长
+		//3年平均>=20%
+		{
+			var zyzbP0 = single.ZYZB[0]
+			var zyzbP1 stock.SingleZyzb
+			var zyzbP2 stock.SingleZyzb
+			var curYear, _ = stock.GetDate(single.ZYZB[0].DATE)
+			for i := 0; i < len(single.ZYZB); i++ {
+				var year, date = stock.GetDate(single.ZYZB[i].DATE)
+				if date == 12 {
+					if 1 == curYear-year {
+						zyzbP1 = single.ZYZB[i]
+					} else if 2 == curYear-year {
+						zyzbP2 = single.ZYZB[i]
+					}
+				}
+			}
+			var tb0 = stock.ToFloat(zyzbP0.YYZSRTBZZ)
+			var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
+			var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
+			var avg = math.Cbrt((1+tb0/100)*(1+tb1/100)*(1+tb2/100))*100 - 100
+			if avg >= 20 {
+				sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, avg, 0x1B)
+			} else {
+				sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
+			}
+		}
+		//营业收入增长>50%
+		{
+			if stock.ToFloat(single.ZYZB[0].YYZSRTBZZ) > 50 {
+				sockInfoShow.YYZSRZZ = fmt.Sprintf("%c[;;36m%2s%c[0m", 0x1B, single.ZYZB[0].YYZSRTBZZ, 0x1B)
+			} else {
+				sockInfoShow.YYZSRZZ = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
+			}
+		}
+		sockInfoShow.HPMCZX = single.THBJ.CZXBJ.DATA[0].PM //成长性排名
+		sockInfoShow.HPMCZX = strings.ReplaceAll(sockInfoShow.HPMCZX, "U003E", ">")
+
+		//估值
+		//市净率
+		sockInfoShow.SJL = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PB8, 0x1B)
+		//静态市盈率
+		sockInfoShow.PEJT = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PE7, 0x1B)
+		//动态市盈率
+		sockInfoShow.PEDT = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PE9, 0x1B)
+		sockInfoShow.PS9 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PS9, 0x1B)
 		//市净率/行业市净率<0.8
 		var rPB8 = value.gzfx.PB8 / value.gzfx.HY_PB8
 		if rPB8 < 0.8 {
@@ -454,6 +520,14 @@ func exportResult(mapStock map[string]StockInfo2) {
 		} else {
 			sockInfoShow.RPS9 = fmt.Sprintf("%c[;;30m   %c[0m", 0x1B, 0x1B)
 		}
+		//PEG<0.8
+		{
+			if !strings.HasPrefix(single.THBJ.GZBJ.DATA[0].PEG, "--") && stock.ToFloat(single.THBJ.GZBJ.DATA[0].PEG) < 0.8 {
+				sockInfoShow.PEG = fmt.Sprintf("%c[;;36m%2s%c[0m", 0x1B, single.THBJ.GZBJ.DATA[0].PEG, 0x1B)
+			} else {
+				sockInfoShow.PEG = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
+			}
+		}
 		//公司内在估值/现价>1.3
 		//E(2R+8.5)*4.4/Y
 		// 	E:每股收益
@@ -471,73 +545,13 @@ func exportResult(mapStock map[string]StockInfo2) {
 				sockInfoShow.MGLZGZ = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
 			}
 		}
-		//PEG<0.8
-		{
-			if !strings.HasPrefix(single.THBJ.GZBJ.DATA[0].PEG, "--") && stock.ToFloat(single.THBJ.GZBJ.DATA[0].PEG) < 0.8 {
-				sockInfoShow.PEG = fmt.Sprintf("%c[;;36m%2s%c[0m", 0x1B, single.THBJ.GZBJ.DATA[0].PEG, 0x1B)
-			} else {
-				sockInfoShow.PEG = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
-			}
-		}
-
-		////////////////估值-值
-		//市净率
-		sockInfoShow.SJL = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PB8, 0x1B)
-		//动态市盈率
-		sockInfoShow.PEDT = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PE9, 0x1B)
-		//静态市盈率
-		sockInfoShow.PEJT = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PE7, 0x1B)
-		sockInfoShow.PS9 = fmt.Sprintf("%c[;;30m%.2f%c[0m", 0x1B, value.gzfx.PS9, 0x1B)
-
-		////////////////////////////////成长
-		//营业收入增长>50%
-		{
-			if stock.ToFloat(single.ZYZB[0].YYZSRTBZZ) > 50 {
-				sockInfoShow.YYZSRZZ = fmt.Sprintf("%c[;;36m%2s%c[0m", 0x1B, single.ZYZB[0].YYZSRTBZZ, 0x1B)
-			} else {
-				sockInfoShow.YYZSRZZ = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
-			}
-		}
-		//3年平均>=20%
-		{
-			var zyzbP0 = single.ZYZB[0]
-			var zyzbP1 stock.SingleZyzb
-			var zyzbP2 stock.SingleZyzb
-			var curYear, _ = stock.GetDate(single.ZYZB[0].DATE)
-			for i := 0; i < len(single.ZYZB); i++ {
-				var year, date = stock.GetDate(single.ZYZB[i].DATE)
-				if date == 12 {
-					if 1 == curYear-year {
-						zyzbP1 = single.ZYZB[i]
-					} else if 2 == curYear-year {
-						zyzbP2 = single.ZYZB[i]
-					}
-				}
-			}
-			var tb0 = stock.ToFloat(zyzbP0.YYZSRTBZZ)
-			var tb1 = stock.ToFloat(zyzbP1.YYZSRTBZZ)
-			var tb2 = stock.ToFloat(zyzbP2.YYZSRTBZZ)
-			var avg = math.Cbrt((1+tb0/100)*(1+tb1/100)*(1+tb2/100))*100 - 100
-			if avg >= 20 {
-				sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;36m%.2f%c[0m", 0x1B, avg, 0x1B)
-			} else {
-				sockInfoShow.YYZSRAVG = fmt.Sprintf("%c[;;30m%c[0m", 0x1B, 0x1B)
-			}
-		}
-
-		////////////////行业排名
-		sockInfoShow.HPMZSZ = single.THBJ.GSGMZSZ[0].PM //总市值排名
-		sockInfoShow.HPMZSZ = strings.ReplaceAll(sockInfoShow.HPMZSZ, "U003E", ">")
-		sockInfoShow.HPMJLR = single.THBJ.GSGMJLR[0].PM //净利润
-		sockInfoShow.HPMJLR = strings.ReplaceAll(sockInfoShow.HPMJLR, "U003E", ">")
-		sockInfoShow.HPMGZ = single.THBJ.GZBJ.DATA[0].PM //估值
+		sockInfoShow.HPMGZ = single.THBJ.GZBJ.DATA[0].PM //估值排名
 		sockInfoShow.HPMGZ = strings.ReplaceAll(sockInfoShow.HPMGZ, "U003E", ">")
-		sockInfoShow.HPMCZX = single.THBJ.CZXBJ.DATA[0].PM //成长性
-		sockInfoShow.HPMCZX = strings.ReplaceAll(sockInfoShow.HPMCZX, "U003E", ">")
 
-		////////////////主力研究
+		//主力
 		//社保/流通股 >= 3%   机构占流通股比例>40%
 		sockInfoShow.SBZB = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
+		//机构合计占流通比
 		sockInfoShow.JGZB = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
 		for i := 0; i < len(single.Gbyj.ZLCC); i++ {
 			if strings.Contains(single.Gbyj.ZLCC[i].JGLX, "社保") && "--" != single.Gbyj.ZLCC[i].ZLTGBL {
@@ -552,14 +566,14 @@ func exportResult(mapStock map[string]StockInfo2) {
 				}
 			}
 		}
-		//机构推荐数>=20
+		//机构推荐数
 		if single.JGTJ >= 20 {
 			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;36m%d%c[0m", 0x1B, single.JGTJ, 0x1B)
 		} else {
 			sockInfoShow.JGTJ = fmt.Sprintf("%c[;;30m  %c[0m", 0x1B, 0x1B)
 		}
 
-		//
+		/////////////////其它无用
 		//前十大股东持股合计
 		//if len(single.Gbyj.GDRS) > 0 && "--" != single.Gbyj.GDRS[0].QSDGDCGHJ {
 		//	var sdgdzb = stock.ToFloat(single.Gbyj.GDRS[0].QSDGDCGHJ)
@@ -593,75 +607,64 @@ func exportResult(mapStock map[string]StockInfo2) {
 	}
 	sort.Stable(sockInfoShows)
 
-	fmt.Println("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")
-	fmt.Printf("┃%7s┃%8s┃%5s┃%8s", "Code", "名称", "现价", "行业")
-	fmt.Printf("┃┃%4s┃%3s┃%3s", "公积金", "未分配", "净益率")
-	fmt.Printf("┃┃%5s┃%4s┃%5s┃%5s┃%5s┃%6s", "市净率估", "PE估", "PET估", "市销率估", "内在股价估", "PEG")
-	fmt.Printf("┃┃%5s┃%4s┃%6s┃%5s", "市净率", "PE静", "PE TTM", "市销率")
-	fmt.Printf("┃┃%4s┃%3s", "收入增长", "三年avg增长")
-	fmt.Printf("┃┃%4s┃%3s┃%3s┃%3s", "总市值排名", "净利润", "估值", "成长性")
-	fmt.Printf("┃┃%4s┃%3s┃%3s", "社/流", "机/流", "推荐数")
-	fmt.Printf("\n")
-	fmt.Println("┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃")
+	fmt.Printf("┃  编码  ┃  名称   ┃ 股价  ┃  行业   ┃公积金┃未分配\n")
+	fmt.Printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 龙头排名  ┃┃总市值s┃净利润s┃毛利率┃ROE\n")
+	fmt.Printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 业绩增长  ┃┃总收3年平均┃ 总收增长┃ 成长性s\n")
+	fmt.Printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 估值 ┃┃ 市净率┃市盈静┃市盈动┃  市销┃ 市净g┃ PE静g┃ PETg┃市销g┃PEGg┃股价g比┃估值s\n")
+	fmt.Printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 主力  ┃┃社/流┃机/流┃推荐数\n")
+	fmt.Println("┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃")
 	for i := 0; i < len(sockInfoShows); i++ {
 		var stock = sockInfoShows[i]
-		fmt.Printf("┃")
-		fmt.Printf("%7s", stock.Code)
-
-		fmt.Printf("┃")
+		////基本信息
+		fmt.Printf("┃%7s", stock.Code)
+		fmt.Printf("┃%s", stock.Name)
 		var rLen = len(stock.Name) - ChineseCount2(stock.Name)
 		var bLen = 10 - rLen
 		for bLen > 0 {
 			fmt.Printf(" ")
 			bLen--
 		}
-		fmt.Printf("%s", stock.Name)
-
-		fmt.Printf("┃%7s", stock.Price)
-
-		fmt.Printf("┃")
+		fmt.Printf("┃%6s", stock.Price)
+		fmt.Printf("┃%s", stock.HYName)
 		rLen = len(stock.HYName) - ChineseCount2(stock.HYName)
 		bLen = 10 - rLen
 		for bLen > 0 {
 			fmt.Printf(" ")
 			bLen--
 		}
-		fmt.Printf("%s", stock.HYName)
+		fmt.Printf("┃%16s┃%16s", stock.MGGJJ, stock.MGWFPLY)
 
-		//重点-------
-		fmt.Printf("┃┃%18s", stock.MGGJJ)
-		fmt.Printf("┃%16s", stock.MGWFPLY)
-		fmt.Printf("┃%17s", stock.WEIGHTAVG_ROE)
+		//龙头
+		fmt.Printf("┃┃%4s┃%4s┃%17s┃%17s",
+			stock.HPMZSZ,
+			stock.HPMJLR,
+			stock.XSMLL,
+			stock.WEIGHTAVG_ROE)
 
-		//估值
-		fmt.Printf("┃┃%19s", stock.RPB8)
-		fmt.Printf("┃%16s", stock.RPE7)
-		fmt.Printf("┃%17s", stock.RPE9)
-		fmt.Printf("┃%19s", stock.RPS9)
-		fmt.Printf("┃%21s", stock.MGLZGZ)
-		fmt.Printf("┃%17s", stock.PEG)
+		//业绩增长
+		fmt.Printf("┃┃%17s┃%18s┃%4s", stock.YYZSRAVG, stock.YYZSRZZ, stock.HPMCZX)
 
-		//估值-值
-		fmt.Printf("┃┃%18s", stock.SJL)
+		////估值
+		fmt.Printf("┃┃%17s", stock.SJL)
 		fmt.Printf("┃%17s", stock.PEJT)
 		fmt.Printf("┃%17s", stock.PEDT)
 		fmt.Printf("┃%17s", stock.PS9)
+		fmt.Printf("┃%16s", stock.RPB8)
+		fmt.Printf("┃%16s", stock.RPE7)
+		fmt.Printf("┃%16s", stock.RPE9)
+		fmt.Printf("┃%16s", stock.RPS9)
+		fmt.Printf("┃%16s", stock.PEG)
+		fmt.Printf("┃%16s", stock.MGLZGZ)
+		fmt.Printf("┃%4s", stock.HPMGZ)
 
-		//高成长
-		fmt.Printf("┃┃%19s", stock.YYZSRZZ)
-		fmt.Printf("┃%21s", stock.YYZSRAVG)
-
-		//行业比较
-		fmt.Printf("┃┃%10s|%5s|%5s|%5s", stock.HPMZSZ, stock.HPMJLR, stock.HPMGZ, stock.HPMCZX)
-
-		//主力研究
-		fmt.Printf("┃┃%17s", stock.SBZB)
+		//主力
+		fmt.Printf("┃┃%16s", stock.SBZB)
 		fmt.Printf("┃%16s", stock.JGZB)
-		fmt.Printf("┃%15s", stock.JGTJ)
+		fmt.Printf("┃%14s", stock.JGTJ)
 
 		fmt.Println("┃")
 	}
-	fmt.Println("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
+	fmt.Println("┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃")
 	fmt.Println("符合条件的股票有=", len(mapStock), "个")
 }
 
