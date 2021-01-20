@@ -360,12 +360,13 @@ func CreateExportEBK2(mapStock map[string]StockInfo2) {
 
 type SockInfoShow struct {
 	//基本信息
-	Code    string //编码
-	Name    string //名称
-	Price   string //股价
-	HYName  string //行业
-	MGGJJ   string //每股公积金
-	MGWFPLY string //每股未分配
+	Code    string  //编码
+	Name    string  //名称
+	Price   string  //股价
+	pri     float32 //股价
+	HYName  string  //行业
+	MGGJJ   string  //每股公积金
+	MGWFPLY string  //每股未分配
 
 	//龙头
 	HPMZSZ        string //总市值排名
@@ -400,7 +401,7 @@ type SockInfoShowArray []SockInfoShow
 
 func (s SockInfoShowArray) Len() int           { return len(s) }
 func (s SockInfoShowArray) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
-func (s SockInfoShowArray) Less(i, j int) bool { return s[i].Price >= s[j].Price }
+func (s SockInfoShowArray) Less(i, j int) bool { return s[i].pri >= s[j].pri }
 
 //显示结果
 func exportResult(mapStock map[string]StockInfo2) {
@@ -416,6 +417,7 @@ func exportResult(mapStock map[string]StockInfo2) {
 		sockInfoShow.Code = key
 		sockInfoShow.Name = value.zcfz.SECURITY_NAME_ABBR
 		sockInfoShow.Price = fmt.Sprint(value.gzfx.NEW)
+		sockInfoShow.pri = value.gzfx.NEW
 		sockInfoShow.HYName = value.gzfx.HYName
 		//公积金*4>现价
 		var mggjj = stock.ToFloat(single.ZYZB[0].MGGJJ)
