@@ -22,13 +22,12 @@ type StockInfo2 struct {
 func main() {
 	mapStock := parserData()
 	mapStock = filterData(mapStock)
-	//exportResult(mapStock)
+	exportResult(mapStock)
 	CreateExportEBK(mapStock)
 
-	mapStock = filterData2(mapStock)
-	exportResult(mapStock)
-	CreateExportEBK2(mapStock)
-	//finAnalyser2(mapStock)
+	//mapStock = filterData2(mapStock)
+	//exportResult(mapStock)
+	//CreateExportEBK2(mapStock)
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
