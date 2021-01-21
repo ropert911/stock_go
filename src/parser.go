@@ -608,64 +608,64 @@ func exportResult(mapStock map[string]StockInfo2) {
 	}
 	sort.Stable(sockInfoShows)
 
-	fmt.Printf("┃  编码  ┃  名称   ┃ 股价  ┃  行业   ┃公积金┃未分配\n")
-	fmt.Printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 龙头排名  ┃┃总市值s┃净利润s┃毛利率┃ROE\n")
-	fmt.Printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 业绩增长  ┃┃总收3年平均┃ 总收增长┃ 成长性s\n")
-	fmt.Printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 估值 ┃┃ 市净率┃市盈静┃市盈动┃  市销┃ 市净g┃ PE静g┃ PETg┃市销g┃PEGg┃股价g比┃估值s\n")
-	fmt.Printf("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 主力  ┃┃社/流┃机/流┃推荐数\n")
-	fmt.Println("┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃")
+	fmt.Printf(" 基本                                                     龙头分析                        成长分析                        估值分析                                                                               主力分析\n")
+	fmt.Print(" 编码   名称           股价  行业         公积金   未分配")
+	fmt.Print("┃┃总市值排 净利润排 毛利率   ROE ")
+	fmt.Print("┃┃avg3增长  增长 研发投入 成长排名")
+	fmt.Print("┃┃市净率┃ 市盈静 ┃ 市盈动 ┃ 市销 ┃ 市净g  ┃ PE静g ┃ PETg  ┃ 市销g ┃ PEGg ┃ 股价g比 ┃ 估值s")
+	fmt.Println("┃┃增持┃社/流┃机/流┃推荐数━━")
 	for i := 0; i < len(sockInfoShows); i++ {
 		var stock = sockInfoShows[i]
-		////基本信息
-		fmt.Printf("┃%7s", stock.Code)
-		fmt.Printf("┃%s", stock.Name)
+		//===============基本信息
+		fmt.Printf("%7s\t%s", stock.Code, stock.Name)
 		var rLen = len(stock.Name) - ChineseCount2(stock.Name)
 		var bLen = 10 - rLen
 		for bLen > 0 {
 			fmt.Printf(" ")
 			bLen--
 		}
-		fmt.Printf("┃%6s", stock.Price)
-		fmt.Printf("┃%s", stock.HYName)
+		fmt.Printf("\t%6s", stock.Price)
+		fmt.Printf("\t%s", stock.HYName)
 		rLen = len(stock.HYName) - ChineseCount2(stock.HYName)
 		bLen = 10 - rLen
 		for bLen > 0 {
 			fmt.Printf(" ")
 			bLen--
 		}
-		fmt.Printf("┃%16s┃%16s", stock.MGGJJ, stock.MGWFPLY)
+		fmt.Printf("\t%16s\t%16s", stock.MGGJJ, stock.MGWFPLY)
 
-		//龙头
-		fmt.Printf("┃┃%4s┃%4s┃%17s┃%17s",
+		//==============龙头指标
+		fmt.Printf("\t%4s\t%4s\t%17s\t%17s",
 			stock.HPMZSZ,
 			stock.HPMJLR,
 			stock.XSMLL,
 			stock.WEIGHTAVG_ROE)
 
-		//业绩增长
-		fmt.Printf("┃┃%17s┃%18s┃%4s", stock.YYZSRAVG, stock.YYZSRZZ, stock.HPMCZX)
+		//=================业绩增长
+		fmt.Printf("\t%17s\t%18s\t%4s\t%4s", stock.YYZSRAVG, stock.YYZSRZZ, "", stock.HPMCZX)
 
-		////估值
-		fmt.Printf("┃┃%17s", stock.SJL)
-		fmt.Printf("┃%17s", stock.PEJT)
-		fmt.Printf("┃%17s", stock.PEDT)
-		fmt.Printf("┃%17s", stock.PS9)
-		fmt.Printf("┃%16s", stock.RPB8)
-		fmt.Printf("┃%16s", stock.RPE7)
-		fmt.Printf("┃%16s", stock.RPE9)
-		fmt.Printf("┃%16s", stock.RPS9)
-		fmt.Printf("┃%16s", stock.PEG)
-		fmt.Printf("┃%16s", stock.MGLZGZ)
-		fmt.Printf("┃%4s", stock.HPMGZ)
+		//=================估值
+		fmt.Printf("\t%17s", stock.SJL)
+		fmt.Printf("\t%17s", stock.PEJT)
+		fmt.Printf("\t%17s", stock.PEDT)
+		fmt.Printf("\t%17s", stock.PS9)
+		fmt.Printf("\t%16s", stock.RPB8)
+		fmt.Printf("\t%16s", stock.RPE7)
+		fmt.Printf("\t%16s", stock.RPE9)
+		fmt.Printf("\t%16s", stock.RPS9)
+		fmt.Printf("\t%16s", stock.PEG)
+		fmt.Printf("\t%16s", stock.MGLZGZ)
+		fmt.Printf("\t%4s", stock.HPMGZ)
 
-		//主力
-		fmt.Printf("┃┃%16s", stock.SBZB)
-		fmt.Printf("┃%16s", stock.JGZB)
-		fmt.Printf("┃%14s", stock.JGTJ)
+		//=================主力
+		fmt.Printf("\t%1s", "")
+		fmt.Printf("\t%16s", stock.SBZB)
+		fmt.Printf("\t%16s", stock.JGZB)
+		fmt.Printf("\t%14s", stock.JGTJ)
 
-		fmt.Println("┃")
+		fmt.Println("")
 	}
-	fmt.Println("┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃")
+	fmt.Println("┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃")
 	fmt.Println("符合条件的股票有=", len(mapStock), "个")
 }
 
