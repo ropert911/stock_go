@@ -9,7 +9,7 @@ import (
 	"util/file"
 )
 
-type StockInfo2 struct {
+type StockInfo1 struct {
 	zcfz stock.StockZCFZ
 	yjbb stock.StockYJBB
 	lrb  stock.StockLRB
@@ -26,8 +26,8 @@ func main() {
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
-func parserData() map[string]StockInfo2 {
-	mapStock := make(map[string]StockInfo2)
+func parserData() map[string]StockInfo1 {
+	mapStock := make(map[string]StockInfo1)
 	socksZcfz := stock.ReadStockZCFZ()
 	socksYjbb := stock.ReadStockYJBB()
 	stockLrb := stock.ReadStockLRB()
@@ -35,7 +35,7 @@ func parserData() map[string]StockInfo2 {
 	socksgzfx := stock.ReadStockGZFX()
 	stockYlyc := stock.ReadStockYLYC()
 	for i := 0; i < len(socksZcfz); i++ {
-		var stockInfo StockInfo2
+		var stockInfo StockInfo1
 		stockInfo.zcfz = socksZcfz[i]
 		for j := 0; j < len(socksYjbb); j++ {
 			if socksZcfz[i].SECURITY_CODE == socksYjbb[j].SECURITY_CODE {
@@ -76,7 +76,7 @@ func parserData() map[string]StockInfo2 {
 }
 
 //过滤掉不符合条件的
-func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
+func filterData(mapStock map[string]StockInfo1) map[string]StockInfo1 {
 	for key, value := range mapStock {
 
 		//////////////////////公司概况===================================
@@ -283,7 +283,7 @@ func filterData(mapStock map[string]StockInfo2) map[string]StockInfo2 {
 }
 
 //生成导出信息
-func CreateExportEBK(mapStock map[string]StockInfo2) {
+func CreateExportEBK(mapStock map[string]StockInfo1) {
 	if len(mapStock) > 0 {
 		var exportName = fmt.Sprintf("%s.EBK", stock.TradeData)
 		file.WriteFile(exportName, `
@@ -298,7 +298,7 @@ func CreateExportEBK(mapStock map[string]StockInfo2) {
 }
 
 //显示结果
-func exportResult(mapStock map[string]StockInfo2) {
+func exportResult(mapStock map[string]StockInfo1) {
 	//把符合条件股票中的亮点数据显示出来
 	fmt.Printf("%4s\t%-8s\t%4s\t%-7s", "编码", "名称", "股价", "行业")
 	fmt.Printf("┃┃%s %s %s %s %s", "收入亿/净利润", "增长50%/三年20%", "毛利率", "净利率-排", "ROE")
@@ -327,14 +327,14 @@ func exportResult(mapStock map[string]StockInfo2) {
 		//	var stock = sockInfoShows[i]
 		//	===============基本信息
 		fmt.Printf("%6s\t%-s", key, value.zcfz.SECURITY_NAME_ABBR) //编码、名称
-		var rLen = len(value.zcfz.SECURITY_NAME_ABBR) - ChineseCount2(value.zcfz.SECURITY_NAME_ABBR)
+		var rLen = len(value.zcfz.SECURITY_NAME_ABBR) - ChineseCount1(value.zcfz.SECURITY_NAME_ABBR)
 		var bLen = 10 - rLen
 		for bLen > 0 {
 			fmt.Printf(" ")
 			bLen--
 		}
 		fmt.Printf("\t%6.2f\t%-s", value.gzfx.NEW, value.gzfx.HYName) //"股价", "行业"
-		rLen = len(value.gzfx.HYName) - ChineseCount2(value.gzfx.HYName)
+		rLen = len(value.gzfx.HYName) - ChineseCount1(value.gzfx.HYName)
 		bLen = 9 - rLen
 		for bLen > 0 {
 			fmt.Printf(" ")
@@ -405,7 +405,7 @@ func exportResult(mapStock map[string]StockInfo2) {
 	fmt.Println("符合条件的股票有=", len(mapStock), "个")
 }
 
-func ChineseCount2(str1 string) (count int) {
+func ChineseCount1(str1 string) (count int) {
 	for _, char := range str1 {
 		if unicode.Is(unicode.Han, char) {
 			count++
