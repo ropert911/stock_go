@@ -383,7 +383,7 @@ func exportResult(mapStock map[string]StockInfo2) {
 			for i := 0; i < len(single.Gbyj.ZLCC); i++ {
 				if strings.Contains(single.Gbyj.ZLCC[i].JGLX, "社保") && "--" != single.Gbyj.ZLCC[i].ZLTGBL {
 					var sbbl = stock.ToFloat(strings.ReplaceAll(single.Gbyj.ZLCC[i].ZLTGBL, "%", ""))
-					if sbbl >= 3 {
+					if sbbl >= 2 {
 						SBZB = fmt.Sprintf("%.1f", sbbl)
 					}
 				} else if strings.Contains(single.Gbyj.ZLCC[i].JGLX, "合计") {
