@@ -19,7 +19,7 @@ type StockInfo2 struct {
 
 func main() {
 	mapStock := parserData2()
-	exportResult2(mapStock, []string{"002918"})
+	exportResult2(mapStock, []string{"002982"})
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
@@ -232,7 +232,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		fmt.Printf("\t不同行业收入的组成(是否专一): \t\t\t\t\t\t\t%s\t%s\n", tip5, "F10 看经营分析")
 		fmt.Printf("\t不同地区海内外收入比例: \t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "F10 看经营分析")
 		fmt.Printf("\t研发投入/营业收入: \t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "http://f10.eastmoney.com/NewFinanceAnalysis/Index?type=web&code=SZ002918#lrb-0")
-		fmt.Printf("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t%s\n", "%3以上不错  10%以上就很有希望了")
+		fmt.Printf("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t%s\n", "%3以上不错  10%以上就很有希望了")
 		fmt.Printf("\t和同行毛利率对比 & 不同产品的收入增长: \t\t\t\t\t%s\t%s\n", tip5, "同花顺 公司概况-经营分析-按产品")
 		fmt.Printf("\t财报分析: \t\t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "同花顺 财务分析-分析")
 		fmt.Printf("\t高管增减持分析: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "爱问财 搜如：三一重工高官持股变化点评")
