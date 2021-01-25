@@ -235,6 +235,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		fmt.Printf("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t%s\n", "%3以上不错  10%以上就很有希望了")
 		fmt.Printf("\t和同行毛利率对比 & 不同产品的收入增长: \t\t\t\t\t%s\t%s\n", tip5, "同花顺 公司概况-经营分析-按产品")
 		fmt.Printf("\t财报分析: \t\t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "同花顺 财务分析-分析")
+		fmt.Printf("\t高管增减持分析: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "爱问财 搜如：三一重工高官持股变化点评")
 		fmt.Printf("\t机构推荐数&调研数: \t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "同花顺 市场观点-机构评级&机构调研")
 		fmt.Printf("\t行业和题材分析: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "同花顺 市场观点-机构调研中的调研报告")
 		fmt.Printf("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t%s\n", "更多的要长期积累")
