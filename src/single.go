@@ -181,7 +181,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		} else {
 			tips = tip4
 		}
-		fmt.Printf("\t货币资金/去年营业收入:\t%.1f亿/%s=%.2f%%\t\t\t%s\n", value.zcfz.MONETARYFUNDS/(10000*10000), zyzbP1.YYZSR, xjbl, tip1)
+		fmt.Printf("\t货币资金/去年营业收入:\t%6.1f亿/%-6s=%-5.2f%%\t\t\t%s\n", value.zcfz.MONETARYFUNDS/(10000*10000), zyzbP1.YYZSR, xjbl, tip1)
 
 		fmt.Println("估值")
 		fmt.Printf("\t静态市盈率-行: %5.1f/%-5.1f\n", value.gzfx.PE7, value.gzfx.HY_PE7)
