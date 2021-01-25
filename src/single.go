@@ -18,7 +18,7 @@ type StockInfo2 struct {
 
 func main() {
 	mapStock := parserData2()
-	exportResult2(mapStock, []string{"300498"})
+	exportResult2(mapStock, []string{"002918"})
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
@@ -126,7 +126,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		} else {
 			tips = tip4
 		}
-		fmt.Printf("\t★近一年收入增长: \t%.2f%%\t\t\t\t\t\t\t\t\t%s\t至少要求 %s\n", tb0, tips, tip2)
+		fmt.Printf("\t★近一年收入增长: \t%.2f%%\t\t\t\t\t\t\t\t\t%s\t至少要求 %s\n", tb0, tips, tip3)
 		tb0 = stock.ToFloat(zyzbP0.MLL)
 		tb1 = stock.ToFloat(zyzbP1.MLL)
 		tb2 = stock.ToFloat(zyzbP2.MLL)
