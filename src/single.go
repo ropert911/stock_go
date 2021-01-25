@@ -19,7 +19,7 @@ type StockInfo2 struct {
 
 func main() {
 	mapStock := parserData2()
-	exportResult2(mapStock, []string{"002982"})
+	exportResult2(mapStock, []string{"603668"})
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
@@ -181,7 +181,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		} else {
 			tips = tip4
 		}
-		fmt.Printf("\t货币资金/去年营业收入:\t%6.1f亿/%-6s=%-5.2f%%\t\t\t%s\n", value.zcfz.MONETARYFUNDS/(10000*10000), zyzbP1.YYZSR, xjbl, tip1)
+		fmt.Printf("\t货币资金/去年营业收入:\t%6.1f亿/%-6s=%.2f%%\t\t\t%s\n", value.zcfz.MONETARYFUNDS/(10000*10000), zyzbP1.YYZSR, xjbl, tips)
 
 		fmt.Println("估值")
 		fmt.Printf("\t静态市盈率-行: %5.1f/%-5.1f\n", value.gzfx.PE7, value.gzfx.HY_PE7)
