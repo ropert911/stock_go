@@ -189,12 +189,11 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		fmt.Printf("\t☆不同行业收入的组成(是否专一): \t\t\t\t\t\t\t\t%s\t%s\n", tip5, "F10 看经营分析")
 		fmt.Printf("\t☆不同地区海内外收入比例: \t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "F10 看经营分析")
 		fmt.Printf("\t不同产品的收入增长: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 公司概况-经营分析-按产品)")
-		fmt.Printf("\t★财报分析: \t\t\t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 财务分析-分析)")
 
 		fmt.Println("=======4 公司发展-行业分析")
-
 		fmt.Printf("\t★研发投入/营业收入: \t\t\t\t\t\t\t\t\t\t\t%.1f\t%s\n", 100*stock.ToFloat(lrbP0.RDEXP)/stock.ToFloat(lrbP0.TOTALOPERATEREVE), "http://f10.eastmoney.com/NewFinanceAnalysis/Index?type=web&code=SZ002918#lrb-0")
 		fmt.Printf("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t%s\n", "%3以上不错  10%以上就很有希望了")
+		fmt.Printf("\t★财报分析: \t\t\t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 财务分析-分析)")
 		fmt.Printf("\t★行业和题材分析: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 市场观点-机构调研中的调研报告)")
 		fmt.Printf("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t%s\n", "更多的要长期积累")
 
@@ -245,13 +244,13 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		fmt.Printf("\t★技术趋势当前是否可以进入: \t\t\t\t\t\t\t\t\t%s\t\n", tip5)
 
 		fmt.Println()
-		fmt.Println("总结：")
-		fmt.Println("过去的成长性：")
-		fmt.Println("同行比收入高不高赚钱多不多(是不是有龙头的特点)：")
-		fmt.Println("公司基本情况是否专一、有没有海外市场：")
-		fmt.Println("公司内生动力-行业前景是否支持公司大发展：")
-		fmt.Println("大家是不是都看好公司(高官、机构)")
-		fmt.Println("估值是否合理，当前是否适合进入")
+		//fmt.Println("总结：")
+		//fmt.Println("过去的成长性：")
+		//fmt.Println("同行比收入高不高赚钱多不多(是不是有龙头的特点)：")
+		//fmt.Println("公司基本情况是否专一、有没有海外市场：")
+		//fmt.Println("公司内生动力-行业前景是否支持公司大发展：")
+		//fmt.Println("大家是不是都看好公司(高官、机构)")
+		//fmt.Println("估值是否合理，当前是否适合进入")
 		fmt.Println("")
 	}
 }
