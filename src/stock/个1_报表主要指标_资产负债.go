@@ -108,6 +108,33 @@ type SingleZcfz struct {
 	SUMLIABSHEQUITY string //负债和股东权益合计
 }
 
+//利润表
+type SingleLrb struct {
+	SECURITYCODE      string //编码
+	SECURITYSHORTNAME string //名称
+	REPORTDATE        string //报告期
+	TOTALOPERATEREVE  string //营业总收入
+	TOTALOPERATEEXP   string //营业总成本
+	OPERATEEXP        string //    营业成本
+	RDEXP             string //    研发费用
+	OPERATETAX        string //    营业税金及附加
+	SALEEXP           string //    销售费用
+	MANAGEEXP         string //    管理费用
+	FINANCEEXP        string //    财务费用
+	INVESTINCOME      string //其它经营收益：投资收益
+	OPERATEPROFIT     string //营业利润
+	NONOPERATEREVE    string //    加:营业外收入
+	NONOPERATEEXP     string //    减:营业外支出
+	SUMPROFIT         string //利润总额
+	INCOMETAX         string //    减:所得税费用
+	NETPROFIT         string //净利润
+	PARENTNETPROFIT   string //    其中:归属于母公司股东的净利润
+	BASICEPS          string //每股收益-基本EPS
+	DILUTEDEPS        string //每股收益-稀释EPS
+	SUMCINCOME        string //综合收益总额
+	PARENTCINCOME     string //    归属于母公司所有者的综合收益总额
+}
+
 //个股主要-指标数据
 func DownloadSingleZyzb(code string) (*string, error) {
 	var urlFormat = `http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=0&code=%s`
@@ -144,6 +171,24 @@ func DownloadSingleZcfz(code string) (*string, error) {
 	return content, nil
 }
 
+//个股--利润
+func DownloadSingleLrb(code string) (*string, error) {
+	var urlFormat = `http://f10.eastmoney.com/NewFinanceAnalysis/lrbAjax?companyType=4&reportDateType=0&reportType=1&endDate=&code=%s`
+
+	var url = fmt.Sprintf(urlFormat,
+		getSCByCode(code))
+	fmt.Println(url)
+
+	//获取数据
+	content, err := http.HttpGet(url)
+	if nil != err {
+		fmt.Println("http get failed url=", url, " error=", err)
+		return nil, err
+	}
+
+	return content, nil
+}
+
 //下载报表相关数据
 func DownloadReportData(code string) {
 	var (
@@ -151,6 +196,8 @@ func DownloadReportData(code string) {
 		zyzbs string
 		zcfz  *string //资产负债
 		zcfzs string
+		lrb   *string //利润表
+		lrbs  string
 		err   error
 	)
 
@@ -189,7 +236,22 @@ func DownloadReportData(code string) {
 		zcfzs = strings.ToUpper(zcfzs)
 		//fmt.Println(zcfzs)
 	}
-	//利润表-略
+	//利润表
+	{
+		lrb, err = DownloadSingleLrb(code)
+		if nil != err {
+			fmt.Println("Error get 利润表", err)
+			return
+		}
+		lrbs = *lrb
+		if strings.HasPrefix(lrbs, `"`) {
+			lrbs = lrbs[1 : len(lrbs)-1]
+		}
+		//fmt.Println(lrbs)
+		lrbs = strings.ReplaceAll(lrbs, `\"`, `"`)
+		lrbs = strings.ToUpper(lrbs)
+		//fmt.Println(lrbs)
+	}
 	//现金流量表-略
 
 	//保存到文件里
@@ -200,6 +262,9 @@ func DownloadReportData(code string) {
 	file.AppendFile(fileName, `,
 "ZCFZ":`)
 	file.AppendFile(fileName, zcfzs)
+	file.AppendFile(fileName, `,
+"LRB":`)
+	file.AppendFile(fileName, lrbs)
 	file.AppendFile(fileName, `
 }`)
 }
@@ -235,6 +300,13 @@ func ParseReportData(code string) (*SingleStock, error) {
 	//	fmt.Println(
 	//		"资财负责 报表日期=", sigleStock.ZCFZ[i].REPORTDATE,
 	//		" 应付票据及应付账款=", sigleStock.ZCFZ[i].ACCOUNTBILLPAY,
+	//	)
+	//}
+
+	//for i := 0; i < len(sigleStock.LRB); i++ {
+	//	fmt.Println(
+	//		"资财负责 报表日期=", sigleStock.LRB[i].REPORTDATE,
+	//		" 营业总收入=", sigleStock.LRB[i].TOTALOPERATEREVE,
 	//	)
 	//}
 

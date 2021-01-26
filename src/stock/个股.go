@@ -3,6 +3,7 @@ package stock
 type SingleStock struct {
 	ZYZB []SingleZyzb //主要指标
 	ZCFZ []SingleZcfz //资产负债
+	LRB  []SingleLrb  //利润表
 	THBJ *SingleTHBJ  //同行比较
 	Gbyj *SingleGbyj  //股本研究
 	JGTJ int          //机构推荐数

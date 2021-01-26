@@ -84,6 +84,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		var key = codes[i]
 		var value = mapStock[codes[i]]
 		var single, _ = stock.ParseSingle(codes[i], value.gzfx.ORIGINALCODE)
+		var lrbP0 = single.LRB[0]
 		var zyzbP0 = single.ZYZB[0]
 		var zyzbP1 stock.SingleZyzb
 		var zyzbP2 stock.SingleZyzb
@@ -191,7 +192,8 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		fmt.Printf("\t★财报分析: \t\t\t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 财务分析-分析)")
 
 		fmt.Println("=======4 公司发展-行业分析")
-		fmt.Printf("\t★研发投入/营业收入: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "http://f10.eastmoney.com/NewFinanceAnalysis/Index?type=web&code=SZ002918#lrb-0")
+
+		fmt.Printf("\t★研发投入/营业收入: \t\t\t\t\t\t\t\t\t\t\t%.1f\t%s\n", 100*stock.ToFloat(lrbP0.RDEXP)/stock.ToFloat(lrbP0.TOTALOPERATEREVE), "http://f10.eastmoney.com/NewFinanceAnalysis/Index?type=web&code=SZ002918#lrb-0")
 		fmt.Printf("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t%s\n", "%3以上不错  10%以上就很有希望了")
 		fmt.Printf("\t★行业和题材分析: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 市场观点-机构调研中的调研报告)")
 		fmt.Printf("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t%s\n", "更多的要长期积累")
