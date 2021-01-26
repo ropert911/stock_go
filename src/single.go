@@ -18,7 +18,7 @@ type StockInfo2 struct {
 
 func main() {
 	mapStock := parserData2()
-	exportResult2(mapStock, []string{"002918"})
+	exportResult2(mapStock, []string{"002918", "605168"})
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
@@ -99,6 +99,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 			}
 		}
 
+		fmt.Println("------------------------------------------------------------------------------------------")
 		//	===============基本信息 编码、名称、"股价", "行业"
 		fmt.Printf("\t%6s\t%-s\t股价: %6.2f\t%-s\n", key, value.zcfz.SECURITY_NAME_ABBR, value.gzfx.NEW, value.gzfx.HYName) //
 		fmt.Println("有增长-有效率-有钱")
