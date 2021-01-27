@@ -18,7 +18,7 @@ type StockInfo2 struct {
 
 func main() {
 	mapStock := parserData2()
-	exportResult2(mapStock, []string{"002982"})
+	exportResult2(mapStock, []string{"300737"})
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
@@ -77,7 +77,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 	var tip2 = fmt.Sprintf("%c[;;34m%s%c[0m", 0x1B, "良好", 0x1B)
 	var tip3 = "一般"
 	var tip4 = fmt.Sprintf("%c[;;31m%s%c[0m", 0x1B, "不好", 0x1B)
-	var tip5 = fmt.Sprintf("%c[;;31m%s%c[0m", 0x1B, "补充", 0x1B)
+	var tip5 = fmt.Sprintf("%c[;;32m%s%c[0m", 0x1B, "补充", 0x1B)
 	var tips = ""
 
 	for i := range codes {
@@ -119,6 +119,15 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 			tips = tip4
 		}
 		fmt.Printf("\t★近三年收入增长: \t%s%%\t%s%%\t%s%%\t平均:%.2f%%\t\t%s\t至少要求 %s\n", zyzbP2.YYZSRTBZZ, zyzbP1.YYZSRTBZZ, zyzbP0.YYZSRTBZZ, avg, tips, tip2)
+		var yincomeY = value.yjbb.TOTAL_OPERATE_INCOME
+		var _, date = stock.GetDate(value.zcfz.REPORT_DATE)
+		if date == 3 {
+			yincomeY = yincomeY * 4
+		} else if date == 6 {
+			yincomeY = yincomeY * 2
+		} else if date == 9 {
+			yincomeY = yincomeY * 4 / 3
+		}
 		if tb0 >= 40 {
 			tips = tip1
 		} else if tb0 >= 20 {
@@ -128,7 +137,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		} else {
 			tips = tip4
 		}
-		fmt.Printf("\t★近一年收入增长: \t%.2f%%\t\t\t\t\t\t\t\t\t%s\t至少要求 %s\n", tb0, tips, tip3)
+		fmt.Printf("\t★近一年收入: 当前:%.2f亿 预估:%.2f亿 增长:%.2f%%\t\t\t%s\t至少要求 10亿|%s\n", value.yjbb.TOTAL_OPERATE_INCOME/(10000*10000), yincomeY/(10000*10000), tb0, tips, tip3)
 		fmt.Printf("\t近三年净利润: \t%s\t%s\t%s\n", zyzbP2.GSJLR, zyzbP1.GSJLR, zyzbP0.GSJLR)
 		tb0 = stock.ToFloat(zyzbP0.GSJLRTBZZ)
 		tb1 = stock.ToFloat(zyzbP1.GSJLRTBZZ)
@@ -160,7 +169,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		} else {
 			tips = tip4
 		}
-		fmt.Printf("\t★近三年毛利率: \t%s%%\t%s%%\t%s%%\t平均:%.2f%%\t\t\t%s\t至少要求 %s\n", zyzbP2.MLL, zyzbP1.MLL, zyzbP0.MLL, avg, tips, tip3)
+		fmt.Printf("\t近三年毛利率: \t%s%%\t%s%%\t%s%%\t平均:%.2f%%\t\t\t%s\t至少要求 %s\n", zyzbP2.MLL, zyzbP1.MLL, zyzbP0.MLL, avg, tips, tip3)
 		if value.yjbb.WEIGHTAVG_ROE >= 20 {
 			tips = tip1
 		} else if value.yjbb.WEIGHTAVG_ROE >= 12 {
@@ -170,7 +179,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		} else {
 			tips = tip4
 		}
-		fmt.Printf("\t★同行毛利率对比: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "要求前3 (同花顺 公司概况-经营分析-按产品)")
+		fmt.Printf("\t★同业数据对比&同业产品毛得对比: \t\t\t\t\t\t\t\t%s\t%s\n", tip5, " (同花顺 操盘必读-行业对比-更多 公司概况-经营分析-按产品)")
 		fmt.Printf("\t★ROE净资产收益率:\t%5.2f\t\t\t\t\t\t\t\t\t%s\t至少要求 %s\n", value.yjbb.WEIGHTAVG_ROE, tips, tip2)
 		var yincome = stock.ToFloat(strings.ReplaceAll(zyzbP1.YYZSR, "亿", "")) * 10000 * 10000
 		var xjbl = 100 * float64(value.zcfz.MONETARYFUNDS) / yincome
@@ -191,11 +200,9 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		fmt.Printf("\t不同产品的收入增长: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 公司概况-经营分析-按产品)")
 
 		fmt.Println("=======4 公司发展-行业分析")
-		fmt.Printf("\t★研发投入/营业收入: \t\t\t\t\t\t\t\t\t\t\t%.1f\t%s\n", 100*stock.ToFloat(lrbP0.RDEXP)/stock.ToFloat(lrbP0.TOTALOPERATEREVE), "http://f10.eastmoney.com/NewFinanceAnalysis/Index?type=web&code=SZ002918#lrb-0")
-		fmt.Printf("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t%s\n", "%3以上不错  10%以上就很有希望了")
+		fmt.Printf("\t★研发投入/营业收入: \t\t\t\t\t\t\t\t\t\t\t%.1f%%\t%s\n", 100*stock.ToFloat(lrbP0.RDEXP)/stock.ToFloat(lrbP0.TOTALOPERATEREVE), "%3以上不错  10%以上就很有希望了")
 		fmt.Printf("\t★财报分析: \t\t\t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 财务分析-分析)")
 		fmt.Printf("\t★行业和题材分析: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 市场观点-机构调研中的调研报告)")
-		fmt.Printf("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t%s\n", "更多的要长期积累")
 
 		fmt.Println("=======5 高管、机构都看好")
 		fmt.Printf("\t☆高管增减持分析: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(爱问财 搜如：三一重工高官持股变化点评)")
@@ -223,8 +230,8 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		} else {
 			tips = tip3
 		}
-		fmt.Printf("\t☆社/流: %.2f\t\t\t\t\t\t\t\t\t\t\t\t%s\n", SBZB, tips)
-		fmt.Printf("\t机/流: %.2f\n", JGZB)
+		fmt.Printf("\t☆社/流: %.2f%%\t\t\t\t\t\t\t\t\t\t\t\t%s\n", SBZB, tips)
+		fmt.Printf("\t机/流: %.2f%%\n", JGZB)
 		if JGTJ >= 30 {
 			tips = tip1
 		} else if JGTJ >= 10 {
@@ -232,14 +239,15 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		} else {
 			tips = tip3
 		}
-		fmt.Printf("\t☆推荐数: %d\t\t\t\t\t\t\t\t\t\t\t\t\t%s\n", JGTJ, tips)
-		fmt.Printf("\t☆机构推荐数&调研数: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 市场观点-机构评级&机构调研)")
+		fmt.Printf("\t☆近6月推荐买入数: %d\t\t\t\t\t\t\t\t\t\t%s\n", JGTJ, tips)
+		fmt.Printf("\t☆机构推荐数1-6月&调研数: \t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 市场观点-机构评级&机构调研)")
+		fmt.Printf("\t☆机构目标价&业绩预测: \t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 研报-研报数据")
+		fmt.Printf("\t☆财务分析&机构研报: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 财务-财务分析 & 研报-研报摘要")
 
 		fmt.Println("=======6 合理估值看时机")
-		fmt.Printf("\t静态市盈率-行: %5.1f/%-5.1f\n", value.gzfx.PE7, value.gzfx.HY_PE7)
-		fmt.Printf("\t动态市盈率-行: %5.1f/%-5.1f\n", value.gzfx.PE9, value.gzfx.HY_PE9)
-		fmt.Printf("\tPEG: %4s\n", single.THBJ.GZBJ.DATA[0].PEG)
-		fmt.Printf("\t估值排名: %4s\n", strings.ReplaceAll(single.THBJ.GZBJ.DATA[0].PM, "U003E", ">"))
+		fmt.Printf("\t静市盈率/行: %5.1f/%-5.1f\n", value.gzfx.PE7, value.gzfx.HY_PE7)
+		fmt.Printf("\t动市盈率/行: %5.1f/%-5.1f\n", value.gzfx.PE9, value.gzfx.HY_PE9)
+		fmt.Printf("\tPEG: %4s\t\t估值排名: %4s \n", single.THBJ.GZBJ.DATA[0].PEG, strings.ReplaceAll(single.THBJ.GZBJ.DATA[0].PM, "U003E", ">"))
 		fmt.Printf("\t★人工估值分析 \t\t\t\t\t\t\t\t\t\t\t\t%4s\t\n", tip5)
 		fmt.Printf("\t★技术趋势当前是否可以进入: \t\t\t\t\t\t\t\t\t%s\t\n", tip5)
 
