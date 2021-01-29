@@ -193,14 +193,16 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 			tips = tip4
 		}
 		fmt.Printf("\t★货币资金/去年营业收入:\t%6.1f亿/%-6s=%.2f%%\t\t\t\t%s\t至少要求 %s\n", value.zcfz.MONETARYFUNDS/(10000*10000), zyzbP1.YYZSR, xjbl, tips, tip2)
-
+		fmt.Printf("\t公积金/现价=%.2f/%.1f%% 未分配/现价=%.2f/%.1f%% 现价:%.2f元\n", stock.ToFloat(single.ZYZB[0].MGGJJ), 100*stock.ToFloat(single.ZYZB[0].MGGJJ)/float64(value.gzfx.NEW), stock.ToFloat(single.ZYZB[0].MGWFPLY), 100*stock.ToFloat(single.ZYZB[0].MGWFPLY)/float64(value.gzfx.NEW), value.gzfx.NEW)
 		fmt.Println("=======3 报表分析找问题")
 		fmt.Printf("\t☆不同行业收入的组成(是否专一): \t\t\t\t\t\t\t\t%s\t%s\n", tip5, "F10 看经营分析")
 		fmt.Printf("\t☆不同地区海内外收入比例: \t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "F10 看经营分析")
 		fmt.Printf("\t不同产品的收入增长: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 公司概况-经营分析-按产品)")
 
 		fmt.Println("=======4 公司发展-行业分析")
-		fmt.Printf("\t★研发投入/营业收入: \t\t\t\t\t\t\t\t\t\t\t%.1f%%\t%s\n", 100*stock.ToFloat(lrbP0.RDEXP)/stock.ToFloat(lrbP0.TOTALOPERATEREVE), "%3以上不错  10%以上就很有希望了")
+
+		fmt.Printf("\t★研发投入/净利润: \t\t\t%.2f亿/%.2f亿=\t%5.2f%%\t\t\t\t\t%s\n", stock.ToFloat(lrbP0.RDEXP)/(10000*10000), stock.ToFloat(lrbP0.PARENTNETPROFIT)/(10000*10000), 100*stock.ToFloat(lrbP0.RDEXP)/stock.ToFloat(lrbP0.PARENTNETPROFIT), "%20以上不错  30%以上很重视了")
+		fmt.Printf("\t★研发投入/营业收入: \t\t\t%.2f亿/%.2f亿=\t%5.2f%%\t\t\t\t\t%s\n", stock.ToFloat(lrbP0.RDEXP)/(10000*10000), stock.ToFloat(lrbP0.TOTALOPERATEREVE)/(10000*10000), 100*stock.ToFloat(lrbP0.RDEXP)/stock.ToFloat(lrbP0.TOTALOPERATEREVE), "%3以上不错  10%以上就很有希望了")
 		fmt.Printf("\t★财报分析: \t\t\t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 财务分析-分析)")
 		fmt.Printf("\t★行业和题材分析: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 市场观点-机构调研中的调研报告)")
 
@@ -248,6 +250,10 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		fmt.Printf("\t静市盈率/行: %5.1f/%-5.1f\n", value.gzfx.PE7, value.gzfx.HY_PE7)
 		fmt.Printf("\t动市盈率/行: %5.1f/%-5.1f\n", value.gzfx.PE9, value.gzfx.HY_PE9)
 		fmt.Printf("\tPEG: %4s\t\t估值排名: %4s \n", single.THBJ.GZBJ.DATA[0].PEG, strings.ReplaceAll(single.THBJ.GZBJ.DATA[0].PM, "U003E", ">"))
+		fmt.Printf("\t☆股东人数 %s %s 较上月=%s 较三月前=%.2f%% \t%s\n",
+			single.Gbyj.GDRS[0].RQ, single.Gbyj.GDRS[0].GDRS, single.Gbyj.GDRS[0].GDRS_JSQBH,
+			100*stock.ToFloat(strings.ReplaceAll(single.Gbyj.GDRS[0].GDRS, "万", ""))/stock.ToFloat(strings.ReplaceAll(single.Gbyj.GDRS[4].GDRS, "万", ""))-100,
+			"-20%就已经比较集中了")
 		fmt.Printf("\t★人工估值分析 \t\t\t\t\t\t\t\t\t\t\t\t%4s\t\n", tip5)
 		fmt.Printf("\t★技术趋势当前是否可以进入: \t\t\t\t\t\t\t\t\t%s\t\n", tip5)
 
