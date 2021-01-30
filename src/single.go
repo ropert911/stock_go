@@ -18,7 +18,7 @@ type StockInfo2 struct {
 
 func main() {
 	mapStock := parserData2()
-	exportResult2(mapStock, []string{"300737"})
+	exportResult2(mapStock, []string{"300815"})
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
@@ -196,9 +196,11 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 			value.gzfx.PE7, value.gzfx.HY_PE7,
 			value.gzfx.PE9, value.gzfx.HY_PE9)
 		fmt.Printf("\tPEG: %4s\t\t估值排名: %4s \n", single.THBJ.GZBJ.DATA[0].PEG, strings.ReplaceAll(single.THBJ.GZBJ.DATA[0].PM, "U003E", ">"))
-		fmt.Printf("\t☆股东人数 %s %s 较上月=%s 较三月前=%.2f%% \t%s\n",
-			single.Gbyj.GDRS[0].RQ, single.Gbyj.GDRS[0].GDRS, single.Gbyj.GDRS[0].GDRS_JSQBH,
-			100*stock.ToFloat(strings.ReplaceAll(single.Gbyj.GDRS[0].GDRS, "万", ""))/stock.ToFloat(strings.ReplaceAll(single.Gbyj.GDRS[4].GDRS, "万", ""))-100,
+		fmt.Printf("\t☆股东人数 %s=%s %s=%s %s=%s 当前和前2期比:%.2f%%\t%s\n",
+			single.Gbyj.GDRS[0].RQ, single.Gbyj.GDRS[0].GDRS,
+			single.Gbyj.GDRS[1].RQ, single.Gbyj.GDRS[1].GDRS,
+			single.Gbyj.GDRS[2].RQ, single.Gbyj.GDRS[2].GDRS,
+			100*stock.ToFloat(strings.ReplaceAll(single.Gbyj.GDRS[0].GDRS, "万", ""))/stock.ToFloat(strings.ReplaceAll(single.Gbyj.GDRS[2].GDRS, "万", ""))-100,
 			"-20%就已经比较集中了")
 
 		fmt.Println()
