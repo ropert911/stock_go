@@ -18,7 +18,7 @@ type StockInfo2 struct {
 
 func main() {
 	mapStock := parserData2()
-	exportResult2(mapStock, []string{"300815"})
+	exportResult2(mapStock, []string{"300737"})
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
@@ -127,8 +127,18 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 			zyzbP2.MLL, zyzbP1.MLL, zyzbP0.MLL,
 			avg, mllGrade(avg),
 			tip3)
-		fmt.Printf("\t★ROE净资产收益率:\t%5.2f%%(%s)\t\t\t\t\t\t\t\t\t\t\t至少要求 %s\n",
-			value.yjbb.WEIGHTAVG_ROE, roeGrade(value.yjbb.WEIGHTAVG_ROE), tip2)
+		fmt.Printf("\t★近三年ROE净资产收益率:")
+		curYear, _ = stock.GetDate(single.ZYZB[0].DATE)
+		for i := 1; i < 9; i++ {
+			var nYear, _ = stock.GetDate(single.ZYZB[i].DATE)
+			if curYear != nYear {
+				fmt.Printf("\t%s", single.ZYZB[i].JQJZCSYL)
+				curYear = nYear
+			}
+		}
+		fmt.Printf("\t今年(%5.2f%% %s)\t\t\t\t\t每年至少10%%\n",
+			value.yjbb.WEIGHTAVG_ROE, roeGrade(value.yjbb.WEIGHTAVG_ROE))
+
 		var yincome = stock.ToFloat(strings.ReplaceAll(zyzbP1.YYZSR, "亿", "")) * 10000 * 10000
 		var xjbl = 100 * float64(value.zcfz.MONETARYFUNDS) / yincome
 		fmt.Printf("\t★货币资金/去年营业收入:\t%6.1f亿/%-6s=%.2f%%(%s)\t\t\t\t\t\t至少要求 %s\n",
@@ -139,9 +149,16 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 			stock.ToFloat(single.ZYZB[0].MGWFPLY), value.gzfx.NEW, 100*stock.ToFloat(single.ZYZB[0].MGWFPLY)/float64(value.gzfx.NEW),
 			"%20以上值得重点关注")
 
-		fmt.Println("=======3 产品分析")
+		fmt.Println("=======3 产品经营分析")
 		fmt.Printf("\t☆不同产品收入组成:(F10 看经营分析) \t\t\t\t\t\t\t\t★同业产品毛利率对比 (同花顺 公司概况-经营分析-按产品)\t\t\t\t%s\n", tip5)
 		fmt.Printf("\t不同产品的收入增长:(同花顺 公司概况-经营分析-按产品) \t\t\t\t☆不同地区海内外收入比例: (F10 看经营分析)\t\t\t\t\t\t\t%s\n", tip5)
+		fmt.Printf("\t存货/营业收入:%.2f亿/%.2f亿=%.2f%%(%s)\n",
+			value.zcfz.INVENTORY/(10000*10000), value.yjbb.TOTAL_OPERATE_INCOME/(10000*10000), 100*value.zcfz.INVENTORY/value.yjbb.TOTAL_OPERATE_INCOME,
+			chGrade(100*value.zcfz.INVENTORY/value.yjbb.TOTAL_OPERATE_INCOME))
+		fmt.Printf("\t应收款/营业收入:%.2f亿/%.2f亿=%.2f%%(%s)\n",
+			value.zcfz.ACCOUNTS_RECE/(10000*10000), value.yjbb.TOTAL_OPERATE_INCOME/(10000*10000), 100*value.zcfz.ACCOUNTS_RECE/value.yjbb.TOTAL_OPERATE_INCOME,
+			yscGrade(100*value.zcfz.ACCOUNTS_RECE/value.yjbb.TOTAL_OPERATE_INCOME))
+		fmt.Printf("\t资产负债率:%s%%\t\t 质押比例:\n", single.ZYZB[0].ZCFZL)
 
 		fmt.Println("=======4 公司发展-行业分析")
 		fmt.Printf("\t★研发投入/净利润: \t\t\t%.2f亿/%.2f亿=\t%-5.2f%%\t\t\t\t\t%s\n",
@@ -304,9 +321,9 @@ func roeGrade(roe float32) string {
 	var tips = ""
 	if roe >= 20 {
 		tips = tip1
-	} else if roe >= 12 {
+	} else if roe >= 14 {
 		tips = tip2
-	} else if roe >= 8 {
+	} else if roe >= 10 {
 		tips = tip3
 	} else {
 		tips = tip4
@@ -322,6 +339,36 @@ func mllGrade(avg float64) string {
 	} else if avg >= 30 {
 		tips = tip2
 	} else if avg >= 20 {
+		tips = tip3
+	} else {
+		tips = tip4
+	}
+	return tips
+}
+
+//存货评级
+func chGrade(avg float32) string {
+	var tips = ""
+	if avg < 10 {
+		tips = tip1
+	} else if avg < 20 {
+		tips = tip2
+	} else if avg < 30 {
+		tips = tip3
+	} else {
+		tips = tip4
+	}
+	return tips
+}
+
+//应收款评级
+func yscGrade(avg float32) string {
+	var tips = ""
+	if avg < 5 {
+		tips = tip1
+	} else if avg < 20 {
+		tips = tip2
+	} else if avg < 30 {
 		tips = tip3
 	} else {
 		tips = tip4
