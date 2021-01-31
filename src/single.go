@@ -18,7 +18,7 @@ type StockInfo2 struct {
 
 func main() {
 	mapStock := parserData2()
-	exportResult2(mapStock, []string{"300737"})
+	exportResult2(mapStock, []string{"300724", "300751"})
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
@@ -76,7 +76,6 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 	var tip1 = fmt.Sprintf("%c[;;36m%s%c[0m", 0x1B, "优秀", 0x1B)
 	var tip2 = fmt.Sprintf("%c[;;34m%s%c[0m", 0x1B, "良好", 0x1B)
 	var tip3 = "一般"
-	var tip5 = fmt.Sprintf("%c[;;32m%s%c[0m", 0x1B, "补充", 0x1B)
 	var tips = ""
 
 	for i := range codes {
@@ -127,17 +126,16 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 			zyzbP2.MLL, zyzbP1.MLL, zyzbP0.MLL,
 			avg, mllGrade(avg),
 			tip3)
-		fmt.Printf("\t★近三年ROE净资产收益率:")
+		fmt.Printf("\t★近三年ROE净资产收益率:\t今年(%5.2f%% %s)", value.yjbb.WEIGHTAVG_ROE, roeGrade(value.yjbb.WEIGHTAVG_ROE))
 		curYear, _ = stock.GetDate(single.ZYZB[0].DATE)
 		for i := 1; i < 9; i++ {
 			var nYear, _ = stock.GetDate(single.ZYZB[i].DATE)
 			if curYear != nYear {
-				fmt.Printf("\t%s", single.ZYZB[i].JQJZCSYL)
+				fmt.Printf("\t%d(%s%%)", nYear, single.ZYZB[i].JQJZCSYL)
 				curYear = nYear
 			}
 		}
-		fmt.Printf("\t今年(%5.2f%% %s)\t\t\t\t\t每年至少10%%\n",
-			value.yjbb.WEIGHTAVG_ROE, roeGrade(value.yjbb.WEIGHTAVG_ROE))
+		fmt.Printf("\t每年至少10%%\n")
 
 		var yincome = stock.ToFloat(strings.ReplaceAll(zyzbP1.YYZSR, "亿", "")) * 10000 * 10000
 		var xjbl = 100 * float64(value.zcfz.MONETARYFUNDS) / yincome
@@ -149,16 +147,14 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 			stock.ToFloat(single.ZYZB[0].MGWFPLY), value.gzfx.NEW, 100*stock.ToFloat(single.ZYZB[0].MGWFPLY)/float64(value.gzfx.NEW),
 			"%20以上值得重点关注")
 
-		fmt.Println("=======3 产品经营分析")
-		fmt.Printf("\t☆不同产品收入组成:(F10 看经营分析) \t\t\t\t\t\t\t\t★同业产品毛利率对比 (同花顺 公司概况-经营分析-按产品)\t\t\t\t%s\n", tip5)
-		fmt.Printf("\t不同产品的收入增长:(同花顺 公司概况-经营分析-按产品) \t\t\t\t☆不同地区海内外收入比例: (F10 看经营分析)\t\t\t\t\t\t\t%s\n", tip5)
+		fmt.Println("=======3 财报")
 		fmt.Printf("\t存货/营业收入:%.2f亿/%.2f亿=%.2f%%(%s)\n",
 			value.zcfz.INVENTORY/(10000*10000), value.yjbb.TOTAL_OPERATE_INCOME/(10000*10000), 100*value.zcfz.INVENTORY/value.yjbb.TOTAL_OPERATE_INCOME,
 			chGrade(100*value.zcfz.INVENTORY/value.yjbb.TOTAL_OPERATE_INCOME))
 		fmt.Printf("\t应收款/营业收入:%.2f亿/%.2f亿=%.2f%%(%s)\n",
 			value.zcfz.ACCOUNTS_RECE/(10000*10000), value.yjbb.TOTAL_OPERATE_INCOME/(10000*10000), 100*value.zcfz.ACCOUNTS_RECE/value.yjbb.TOTAL_OPERATE_INCOME,
 			yscGrade(100*value.zcfz.ACCOUNTS_RECE/value.yjbb.TOTAL_OPERATE_INCOME))
-		fmt.Printf("\t资产负债率:%s%%\t\t 质押比例:\n", single.ZYZB[0].ZCFZL)
+		fmt.Printf("\t资产负债率:%s%%\t\t\n", single.ZYZB[0].ZCFZL)
 
 		fmt.Println("=======4 公司发展-行业分析")
 		fmt.Printf("\t★研发投入/净利润: \t\t\t%.2f亿/%.2f亿=\t%-5.2f%%\t\t\t\t\t%s\n",
@@ -167,10 +163,8 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		fmt.Printf("\t★研发投入/营业收入: \t\t\t%.2f亿/%.2f亿=\t%5.2f%%\t\t\t\t\t%s\n",
 			stock.ToFloat(lrbP0.RDEXP)/(10000*10000), stock.ToFloat(lrbP0.TOTALOPERATEREVE)/(10000*10000), 100*stock.ToFloat(lrbP0.RDEXP)/stock.ToFloat(lrbP0.TOTALOPERATEREVE),
 			"%3以上不错  10%以上就很有希望了")
-		fmt.Printf("\t★财报分析 & 行业和题材分析: \t%s\t\t\t\t\t\t\t\t\t%s\n", tip5, "(同花顺 财务分析-分析)(同花顺研报-研报摘要)(同花顺 市场观点-机构调研中的调研报告)")
 
 		fmt.Println("=======5 高管、机构都看好")
-		fmt.Printf("\t☆高管增减持分析: \t\t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(爱问财 搜如：三一重工高官持股变化点评)")
 		var SBZB = float64(0)
 		var JGZB = float64(0)
 		var JGTJ = 0
@@ -204,9 +198,7 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		} else {
 			tips = tip3
 		}
-		fmt.Printf("\t☆近6月推荐买入数: %d\t\t\t\t\t\t\t\t\t\t%s\n", JGTJ, tips)
-		fmt.Printf("\t☆机构推荐数1-6月&调研数: \t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 市场观点-机构评级&机构调研)")
-		fmt.Printf("\t☆机构目标价&业绩预测: \t\t\t\t\t\t\t\t\t\t%s\t%s\n", tip5, "(同花顺 研报-研报数据")
+		fmt.Printf("\t☆近6月推荐买入数: %d\t\t\t\t\t\t\t\t\t\t\t%s\n", JGTJ, tips)
 
 		fmt.Println("=======6 合理估值看时机")
 		fmt.Printf("\t静市盈率/行: %5.1f/%-5.1f\t动市盈率/行: %5.1f/%-5.1f\n",
