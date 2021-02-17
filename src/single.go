@@ -18,7 +18,7 @@ type StockInfo2 struct {
 
 func main() {
 	mapStock := parserData2()
-	exportResult2(mapStock, []string{"300737"})
+	exportResult2(mapStock, []string{"000910"})
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
@@ -130,11 +130,12 @@ func exportResult2(mapStock map[string]StockInfo2, codes []string) {
 		}
 		fmt.Printf("\t今年(%5.2f%% %s)", value.yjbb.WEIGHTAVG_ROE, roeGrade(value.yjbb.WEIGHTAVG_ROE))
 		fmt.Printf("\t\t\t\t\t\t\t\t\t\t\t\t说明: >10%% 可以 >14%% 良好>20%% 优秀\n")
-		fmt.Printf("\t☆每股经营现金流: \t%s元\t\t%s元\t\t今年%s元(现金流 %0.2f亿)\t\t\t\t\t\t\t\t\t说明:快速发展的公司可能并不是很好\n",
+		fmt.Printf("\t☆每股经营现金流: \t%s元\t\t%s元\t\t今年%s元(现金流:%0.2f亿 净利润:%0.2f亿)\t\t\t\t\t\t\t\t\t说明:快速发展的公司可能并不是很好\n",
 			zyzbP2.MGJYXJL,
 			zyzbP1.MGJYXJL,
 			zyzbP0.MGJYXJL,
-			value.xjll.NETCASH_OPERATE/(10000*10000))
+			value.xjll.NETCASH_OPERATE/(10000*10000),
+			value.lrb.PARENT_NETPROFIT/(10000*10000))
 
 		var yincome = stock.ToFloat(strings.ReplaceAll(zyzbP1.YYZSR, "亿", "")) * 10000 * 10000
 		var xjbl = 100 * float64(value.zcfz.MONETARYFUNDS) / yincome
