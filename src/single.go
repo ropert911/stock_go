@@ -18,7 +18,7 @@ type StockInfo2 struct {
 
 func main() {
 	mapStock := parserData2()
-	exportResult2(mapStock, []string{"000910"})
+	exportResult2(mapStock, []string{"300602"})
 }
 
 //解析所有数据-估值分析、资产负债、业绩报表、利润表
