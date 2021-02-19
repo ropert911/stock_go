@@ -243,20 +243,24 @@ func filterData(mapStock map[string]StockInfo1) map[string]StockInfo1 {
 			}
 			//三年平均ROE>行业平均和行业中值 --- 单个里
 			{
-				if stock.ToFloat(single.THBJ.DBFXBJ.DATA[0].ROEPJ) < stock.ToFloat(single.THBJ.DBFXBJ.DATA[1].ROEPJ) {
-					delete(mapStock, key)
-					continue
-				}
-				if stock.ToFloat(single.THBJ.DBFXBJ.DATA[0].ROEPJ) < stock.ToFloat(single.THBJ.DBFXBJ.DATA[2].ROEPJ) {
-					delete(mapStock, key)
-					continue
+				if nil != single.THBJ {
+					if stock.ToFloat(single.THBJ.DBFXBJ.DATA[0].ROEPJ) < stock.ToFloat(single.THBJ.DBFXBJ.DATA[1].ROEPJ) {
+						delete(mapStock, key)
+						continue
+					}
+					if stock.ToFloat(single.THBJ.DBFXBJ.DATA[0].ROEPJ) < stock.ToFloat(single.THBJ.DBFXBJ.DATA[2].ROEPJ) {
+						delete(mapStock, key)
+						continue
+					}
 				}
 			}
 			//前一年的净资产收益>=行业中值*1.2--- 单个里
 			{
-				if stock.ToFloat(single.THBJ.DBFXBJ.DATA[0].ROE2) < (stock.ToFloat(single.THBJ.DBFXBJ.DATA[2].ROE2) * 1.2) {
-					delete(mapStock, key)
-					continue
+				if nil != single.THBJ {
+					if stock.ToFloat(single.THBJ.DBFXBJ.DATA[0].ROE2) < (stock.ToFloat(single.THBJ.DBFXBJ.DATA[2].ROE2) * 1.2) {
+						delete(mapStock, key)
+						continue
+					}
 				}
 			}
 			//未分配利润 >1亿 --- 单个里
@@ -358,20 +362,33 @@ func exportResult(mapStock map[string]StockInfo1) {
 				fmt.Printf("\t   /   ")
 			}
 		}
-		fmt.Printf("\t%5.2f", value.yjbb.XSMLL)                         //毛利润
-		fmt.Printf("\t%5s/%-3s", zyzbP0.JLL, single.THBJ.GSGMJLR[0].PM) //净利率-排
-		fmt.Printf("\t%5.2f", value.yjbb.WEIGHTAVG_ROE)                 //ROE
+		fmt.Printf("\t%5.2f", value.yjbb.XSMLL) //毛利润
+		if nil != single.THBJ {
+			fmt.Printf("\t%5s/%-3s", zyzbP0.JLL, single.THBJ.GSGMJLR[0].PM) //净利率-排
+		} else {
+			fmt.Printf("\t%5s/%-3s", zyzbP0.JLL, "Nil") //净利率-排
+		}
+		fmt.Printf("\t%5.2f", value.yjbb.WEIGHTAVG_ROE) //ROE
 
 		//	===============发展
-		fmt.Printf("\t%4s", strings.ReplaceAll(single.THBJ.CZXBJ.DATA[0].PM, "U003E", ">")) //成长性排名
+		if nil != single.THBJ {
+			fmt.Printf("\t%4s", strings.ReplaceAll(single.THBJ.CZXBJ.DATA[0].PM, "U003E", ">")) //成长性排名
+		} else {
+			fmt.Printf("\t%4s", "nil") //成长性排名
+		}
 
 		//	===============估值
-		fmt.Printf("\t%4.1f/%-4.1f", value.gzfx.PB8, value.gzfx.HY_PB8)                    //市净率-行
-		fmt.Printf("\t%5.1f/%-5.1f", value.gzfx.PE7, value.gzfx.HY_PE7)                    //静态市盈率-行
-		fmt.Printf("\t%5.1f/%-5.1f", value.gzfx.PE9, value.gzfx.HY_PE9)                    //动态市盈率-行
-		fmt.Printf("\t%4.1f/%-4.1f", value.gzfx.PS9, value.gzfx.HY_PS9)                    //市销率-行
-		fmt.Printf("\t%4s", single.THBJ.GZBJ.DATA[0].PEG)                                  //PEG
-		fmt.Printf("\t%4s", strings.ReplaceAll(single.THBJ.GZBJ.DATA[0].PM, "U003E", ">")) //估值排名
+		fmt.Printf("\t%4.1f/%-4.1f", value.gzfx.PB8, value.gzfx.HY_PB8) //市净率-行
+		fmt.Printf("\t%5.1f/%-5.1f", value.gzfx.PE7, value.gzfx.HY_PE7) //静态市盈率-行
+		fmt.Printf("\t%5.1f/%-5.1f", value.gzfx.PE9, value.gzfx.HY_PE9) //动态市盈率-行
+		fmt.Printf("\t%4.1f/%-4.1f", value.gzfx.PS9, value.gzfx.HY_PS9) //市销率-行
+		if nil != single.THBJ {
+			fmt.Printf("\t%4s", single.THBJ.GZBJ.DATA[0].PEG)                                  //PEG
+			fmt.Printf("\t%4s", strings.ReplaceAll(single.THBJ.GZBJ.DATA[0].PM, "U003E", ">")) //估值排名
+		} else {
+			fmt.Printf("\t%4s", "nil") //PEG
+			fmt.Printf("\t%4s", "nil") //估值排名
+		}
 
 		//	===============主力
 		//社保/流通股 >= 3%   机构占流通股比例>40%

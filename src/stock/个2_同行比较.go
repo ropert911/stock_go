@@ -200,7 +200,7 @@ func ParseTHBJ(code string, icode string) *SingleTHBJ {
 	var singleTHBJ SingleTHBJ
 	err = json.Unmarshal([]byte(data), &singleTHBJ)
 	if nil != err {
-		fmt.Println(" json unmarshal failed!!!! ", err, " data=", data)
+		//fmt.Println(" json unmarshal failed!!!! ", err, " data=", data)
 		return nil
 	}
 
